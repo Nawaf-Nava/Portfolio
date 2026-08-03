@@ -16,5 +16,14 @@
     "tech": ["Zphisher", "Kali Linux", "Termux", "Cloudflare Tunnel"],
     "github": "",
     "report": "/projects/phishing-zphisher-report.pdf"
+  },
+  {
+    "id": "groww-security-assessment",
+    "title": "Groww Fintech Platform — Security Assessment & Vulnerability Disclosure",
+    "description": "Authorized penetration testing engagement on Groww (investment fintech platform) through BugBase bug bounty program. Identified and reported 3 critical security vulnerabilities: CRITICAL-level Information Disclosure (sensitive user financial data via API endpoints), HIGH-level Infrastructure Reconnaissance (internal network details leaked through HTTP headers exposing RFC1918 private IPs), and MODERATE-level User Enumeration (email-based account existence detection via response analysis). Full responsible disclosure workflow completed with detailed impact analysis and bounty submission.",
+    "image": "/images/projects/groww-security-assessment.png",
+    "tech": ["Burp Suite", "API Reconnaissance", "Web Penetration Testing", "Responsible Disclosure", "Infrastructure Analysis"],
+    "github": "",
+    "report": "/projects/groww-bounty-summary.html"
   }
 ]

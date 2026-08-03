@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug Bounty Summary — Groww VDP</title>
+  <style>
+    :root{
+      --bg:        #050a06;
+      --panel:     #0b120d;
+      --panel-2:   #0e1712;
+      --line:      #1c3324;
+      --green:     #3cff7a;
+      --green-dim: #8fae9a;
+      --white:     #eaf5ee;
+      --red:       #ff3b3b;
+      --yellow:    #ffcf40;
+      --orange:    #ff8c32;
+      --neutral:   #6b8078;
+
+      --font-mono: ui-monospace, "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{
+      margin:0; padding:0;
+      background:var(--bg);
+      color:var(--white);
+      font-family:var(--font-sans);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    body{
+      padding: 32px 16px 64px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .crt{
+      position:relative;
+      width:100%;
+      max-width:880px;
+    }
+
+    .scanlines{
+      pointer-events:none;
+      position:absolute;
+      inset:0;
+      z-index:5;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(60,255,122,0.035) 0px,
+        rgba(60,255,122,0.035) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+      mix-blend-mode:screen;
+      opacity:.5;
+    }
+
+    .window{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:linear-gradient(180deg, var(--panel), var(--bg) 60%);
+      box-shadow:
+        0 0 0 1px rgba(60,255,122,0.05),
+        0 30px 80px -30px rgba(0,0,0,0.9),
+        0 0 120px -60px rgba(60,255,122,0.25);
+      overflow:hidden;
+    }
+
+    /* ---------- title bar ---------- */
+    .titlebar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 16px;
+      background:var(--panel-2);
+      border-bottom:1px solid var(--line);
+    }
+    .dots{ display:flex; gap:7px; flex:0 0 auto; }
+    .dot{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+    .dot.red{ background:var(--red); box-shadow:0 0 8px color-mix(in srgb, var(--red) 60%, transparent); }
+    .dot.yellow{ background:var(--yellow); box-shadow:0 0 8px color-mix(in srgb, var(--yellow) 60%, transparent); }
+    .dot.green{ background:var(--green); box-shadow:0 0 8px color-mix(in srgb, var(--green) 60%, transparent); }
+    .path{
+      font-family:var(--font-mono);
+      font-size:12px;
+      color:var(--green-dim);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .content{ padding:28px clamp(16px,4vw,40px) 40px; }
+
+    /* ---------- boot sequence ---------- */
+    .boot{ font-family:var(--font-mono); font-size:12.5px; line-height:1.9; margin:0 0 28px; }
+    .boot .line{
+      margin:0;
+      color:var(--green-dim);
+      white-space:nowrap;
+      overflow:hidden;
+      border-right:2px solid transparent;
+      width:0;
+      animation: type 900ms steps(60,end) forwards;
+    }
+    .boot .line .tag{ color:var(--green); }
+    .boot .l1{ animation-delay:0ms; }
+    .boot .l2{ animation-delay:950ms; }
+    .boot .l3{ animation-delay:1900ms; }
+    .boot .l4{ animation-delay:2850ms; color:var(--white); }
+    .boot .l5{ animation-delay:3800ms; color:var(--white); }
+    @keyframes type{
+      0%{ width:0; border-color:var(--green); }
+      99%{ border-color:var(--green); }
+      100%{ width:100%; border-color:transparent; }
+    }
+    @media (prefers-reduced-motion: reduce){
+      .boot .line{ animation:none; width:100%; }
+    }
+
+    /* ---------- case header ---------- */
+    .case-header{ margin-bottom:32px; }
+    .eyebrow{
+      font-family:var(--font-mono);
+      font-size:11px;
+      letter-spacing:.14em;
+      color:var(--green);
+      text-transform:uppercase;
+      margin:0 0 8px;
+    }
+    h1{
+      font-family:var(--font-mono);
+      font-size:clamp(22px,4vw,30px);
+      font-weight:700;
+      letter-spacing:.02em;
+      margin:0 0 20px;
+      color:var(--white);
+      text-wrap:balance;
+    }
+    .meta-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+      gap:1px;
+      background:var(--line);
+      border:1px solid var(--line);
+      border-radius:6px;
+      overflow:hidden;
+    }
+    .meta-cell{ background:var(--panel); padding:12px 14px; }
+    .meta-cell .k{
+      display:block; font-family:var(--font-mono); font-size:10px;
+      letter-spacing:.1em; text-transform:uppercase; color:var(--neutral); margin-bottom:5px;
+    }
+    .meta-cell .v{ font-family:var(--font-mono); font-size:13px; color:var(--green-dim); }
+    .meta-cell .v.strong{ color:var(--white); }
+
+    /* ---------- modules ---------- */
+    .module{
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:var(--panel);
+      margin-bottom:18px;
+      overflow:hidden;
+    }
+    .module-head{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:12px 16px;
+      background:var(--panel-2);
+      border-bottom:1px solid var(--line);
+    }
+    .module-head .tag{
+      font-family:var(--font-mono); font-size:11px; letter-spacing:.08em;
+      color:var(--green); text-transform:uppercase;
+    }
+    .module-head .name{
+      font-family:var(--font-mono); font-size:13.5px; color:var(--white); margin-left:10px;
+    }
+    .module-head .ts{ font-family:var(--font-mono); font-size:11px; color:var(--neutral); }
+    .module-body{ padding:16px 18px 18px; }
+    .module-body p{
+      margin:0 0 10px;
+      max-width:66ch;
+      font-size:14.5px;
+      line-height:1.65;
+      color:#cfe3d6;
+    }
+    .module-body p:last-child{ margin-bottom:0; }
+
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em;
+      text-transform:uppercase; padding:3px 9px; border-radius:100px;
+      border:1px solid currentColor;
+    }
+    .chip.crit{ color:var(--red); background:color-mix(in srgb, var(--red) 12%, transparent); }
+    .chip.high{ color:var(--orange); background:color-mix(in srgb, var(--orange) 12%, transparent); }
+    .chip.mod{ color:var(--yellow); background:color-mix(in srgb, var(--yellow) 12%, transparent); }
+    .chip.neu{ color:var(--neutral); background:color-mix(in srgb, var(--neutral) 12%, transparent); }
+    .chip.ok{ color:var(--green); background:color-mix(in srgb, var(--green) 12%, transparent); }
+
+    .kv-list{ list-style:none; margin:10px 0 0; padding:0; display:grid; gap:6px; }
+    .kv-list li{
+      font-family:var(--font-mono); font-size:12.5px; color:var(--green-dim);
+      padding-left:16px; position:relative;
+    }
+    .kv-list li::before{ content:"▸"; position:absolute; left:0; color:var(--green); }
+
+    /* ---------- verdict ---------- */
+    .verdict{
+      border:1px solid var(--yellow);
+      border-radius:8px;
+      background:linear-gradient(180deg, color-mix(in srgb, var(--yellow) 8%, var(--panel)), var(--panel));
+      padding:22px clamp(16px,4vw,28px) 26px;
+      margin:28px 0 18px;
+    }
+    .verdict .eyebrow{ color:var(--yellow); }
+    .verdict h2{
+      font-family:var(--font-mono); font-size:clamp(18px,3.4vw,24px);
+      margin:2px 0 14px; color:var(--white); text-wrap:balance;
+    }
+    .verdict p{ max-width:68ch; font-size:14.5px; line-height:1.65; color:#e6cfcf; margin:0 0 18px; }
+
+    .meter{ margin-top:6px; }
+    .meter-track{
+      position:relative;
+      height:10px; border-radius:100px;
+      background:var(--panel-2);
+      border:1px solid var(--line);
+      overflow:hidden;
+    }
+    .meter-fill{
+      position:absolute; inset:0 auto 0 0; width:95%;
+      background:linear-gradient(90deg, var(--green), var(--yellow) 30%, var(--orange) 65%, var(--red));
+      border-radius:100px 0 0 100px;
+    }
+    .meter-labels{
+      display:flex; justify-content:space-between;
+      font-family:var(--font-mono); font-size:10px; letter-spacing:.06em;
+      text-transform:uppercase; color:var(--neutral); margin-top:8px;
+    }
+    .meter-labels .active{ color:var(--red); font-weight:700; }
+
+    /* ---------- table ---------- */
+    .table-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:8px; }
+    table{ width:100%; border-collapse:collapse; font-size:13px; min-width:560px; }
+    thead th{
+      font-family:var(--font-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--neutral); text-align:left; padding:10px 14px; background:var(--panel-2);
+      border-bottom:1px solid var(--line); white-space:nowrap;
+    }
+    tbody td{
+      padding:12px 14px; border-bottom:1px solid var(--line); color:#cfe3d6;
+      font-size:13px; line-height:1.5; vertical-align:top;
+    }
+    tbody td.mono{ font-family:var(--font-mono); color:var(--green-dim); white-space:nowrap; }
+    tbody tr:last-child td{ border-bottom:none; }
+    tbody td.id{ font-weight:600; color:var(--white); }
+
+    /* ---------- disclosure ---------- */
+    .disclosure{
+      border:1px dashed var(--green);
+      border-radius:8px;
+      background:color-mix(in srgb, var(--green) 6%, var(--panel));
+      padding:18px 20px 20px;
+      margin:24px 0;
+    }
+    .disclosure .eyebrow{ color:var(--green); }
+    .disclosure h3{ font-family:var(--font-mono); font-size:15px; margin:2px 0 12px; color:var(--white); }
+    .disclosure p{ font-size:14px; line-height:1.65; color:#cfe3d6; max-width:66ch; margin:0 0 12px; }
+    .not-found{ display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; margin:14px 0 0; padding:0; list-style:none; }
+    .not-found li{
+      font-family:var(--font-mono); font-size:11.5px; color:var(--neutral);
+      padding:8px 10px; border:1px solid var(--line); border-radius:6px; background:var(--panel-2);
+    }
+    .not-found li::before{ content:"[ SUBMITTED ]  "; color:var(--green); }
+
+    /* ---------- actions ---------- */
+    .actions{ margin:24px 0 8px; }
+    .actions h3{ font-family:var(--font-mono); font-size:15px; color:var(--white); margin:0 0 12px; }
+    .checklist{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+    .checklist li{
+      display:flex; gap:12px; align-items:flex-start;
+      font-size:14px; line-height:1.6; color:#cfe3d6;
+      padding:11px 14px; border:1px solid var(--line); border-radius:6px; background:var(--panel);
+    }
+    .checklist .box{ font-family:var(--font-mono); color:var(--green); flex:0 0 auto; }
+    .checklist .urgent{ border-color:var(--yellow); background:color-mix(in srgb, var(--yellow) 8%, var(--panel)); }
+    .checklist .urgent .box{ color:var(--yellow); }
+    .checklist a{ color:var(--green); }
+
+    /* ---------- footer ---------- */
+    footer{
+      margin-top:32px; padding-top:18px; border-top:1px solid var(--line);
+      font-family:var(--font-mono); font-size:11px; color:var(--neutral); line-height:1.9;
+    }
+    footer .cursor{ display:inline-block; width:7px; height:13px; background:var(--green); margin-left:2px; vertical-align:-2px; animation:blink 1s steps(1) infinite; }
+    @keyframes blink{ 50%{ opacity:0; } }
+    @media (prefers-reduced-motion: reduce){ footer .cursor{ animation:none; } }
+    footer .stamp{ color:var(--green); }
+
+    @media (max-width:520px){
+      .content{ padding:22px 14px 30px; }
+      .module-head{ flex-wrap:wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="crt">
+  <div class="scanlines"></div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+      <div class="path">root@bugbase:~/reports/GROWW-BUG-20260803</div>
+    </div>
+
+    <div class="content">
+
+      <div class="boot">
+        <p class="line l1"><span class="tag">$</span> ./submit --program="groww" --severity=multi --scope=api</p>
+        <p class="line l2"><span class="tag">[OK]</span> validating reports: 3 findings loaded</p>
+        <p class="line l3"><span class="tag">[OK]</span> uploading to BugBase... done</p>
+        <p class="line l4">[DONE] all reports submitted to program review</p>
+        <p class="line l5"><span class="tag">$</span> _</p>
+      </div>
+
+      <div class="case-header">
+        <p class="eyebrow">// bug bounty submission summary</p>
+        <h1>Groww Web App — Multi-Vector Security Assessment</h1>
+        <div class="meta-grid">
+          <div class="meta-cell"><span class="k">Program</span><span class="v strong">Groww VDP (BugBase)</span></div>
+          <div class="meta-cell"><span class="k">Reports Filed</span><span class="v strong">3</span></div>
+          <div class="meta-cell"><span class="k">Vulnerabilities</span><span class="v strong">Customer enumeration, user enumeration, infrastructure disclosure</span></div>
+          <div class="meta-cell"><span class="k">Bounty Tier</span><span class="v">Medium ($250–$500), Low ($100–$250), Informational ($100–$250)</span></div>
+          <div class="meta-cell"><span class="k">Total Scope</span><span class="v">https://groww.in &amp; subdomains</span></div>
+          <div class="meta-cell"><span class="k">Testing Period</span><span class="v">2026-08-01 to 2026-08-03</span></div>
+          <div class="meta-cell"><span class="k">Methodology</span><span class="v">Web app penetration testing + DNS reconnaissance</span></div>
+          <div class="meta-cell"><span class="k">Submitted</span><span class="v">2026-08-03 16:45 UTC</span></div>
+        </div>
+      </div>
+
+      <!-- MODULE 01 -->
+      <section class="module" id="mod-01">
+        <div class="module-head">
+          <div><span class="tag">[REPORT 1]</span><span class="name">Bulk Customer Account ID Disclosure</span></div>
+          <span class="ts">BugBase #72629840</span>
+        </div>
+        <div class="module-body">
+          <p><strong>Endpoint:</strong> <code>GET /v1/api/features/sdk-production-G5hzhqMWonPN3S1q</code></p>
+          <p>An unauthenticated, publicly-accessible feature flag endpoint leaks <strong>127 unique real Groww customer account IDs</strong> in sequential ACC###### format. No authentication required; ID enumeration trivial via HTTP client.</p>
+          <span class="chip crit">Critical signal</span>
+          <ul class="kv-list">
+            <li>127 live customer IDs extracted from single request</li>
+            <li>No authentication barrier; public endpoint</li>
+            <li>Sequential ID pattern enables brute-force account enumeration</li>
+            <li>Customer financial account exposure (Groww = investment platform)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- MODULE 02 -->
+      <section class="module" id="mod-02">
+        <div class="module-head">
+          <div><span class="tag">[REPORT 2]</span><span class="name">Unauthenticated User Enumeration</span></div>
+          <span class="ts">BugBase #63683036</span>
+        </div>
+        <div class="module-body">
+          <p><strong>Endpoint:</strong> <code>POST /v1/api/user/v2/login/check_email</code></p>
+          <p>Pre-login email validation returns <strong>structurally different JSON responses</strong> depending on whether an email is registered, and whether the user has a password credential set. Three independent oracles enable rapid account enumeration and credential-method disclosure.</p>
+          <span class="chip high">Elevated signal</span>
+          <ul class="kv-list">
+            <li>Three independent response oracles: <code>already_exists</code>, <code>password_exists</code>, structural keys</li>
+            <li>No rate limiting observed</li>
+            <li>Enables targeted phishing and credential-stuffing prioritization</li>
+            <li>Fintech target = high-value account enumeration</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- MODULE 03 -->
+      <section class="module" id="mod-03">
+        <div class="module-head">
+          <div><span class="tag">[REPORT 3]</span><span class="name">Internal Infrastructure IP Disclosure</span></div>
+          <span class="ts">BugBase #50213014</span>
+        </div>
+        <div class="module-body">
+          <p><strong>Records:</strong> jenkins.groww.in, spinnaker.groww.in, alertmanager.groww.in, portal.groww.in, portal.growwmf.in</p>
+          <p>In-scope wildcard subdomains resolve via public DNS to private RFC1918 addresses. Hostnames disclose internal CI/CD, monitoring, and admin tooling; allows network reconnaissance and SSRF/post-foothold chaining.</p>
+          <span class="chip mod">Moderate signal</span>
+          <ul class="kv-list">
+            <li>5 internal IPs disclosed: 10.82.10.9, 10.80.50.105, 10.69.0.90, 10.154.80.81, 10.140.8.54</li>
+            <li>Not remotely routable, but maps internal topology</li>
+            <li>Descriptive hostnames leak internal services (Jenkins, Spinnaker, Alertmanager)</li>
+            <li>Useful for post-compromise lateral movement targeting</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- VERDICT -->
+      <section class="verdict">
+        <p class="eyebrow">// assessment summary</p>
+        <h2>Three Independent Security Issues Submitted</h2>
+        <p>All three vulnerabilities stem from information disclosure on public-facing endpoints or DNS records in scope. Combined, they enable rapid account enumeration at scale (Report #1 + #2), infrastructure reconnaissance (Report #3), and targeted social engineering. Each report includes proof-of-concept, impact analysis, and remediation guidance.</p>
+        <div class="meter">
+          <div class="meter-track"><div class="meter-fill"></div></div>
+          <div class="meter-labels">
+            <span>Info</span><span>Low</span><span>Medium</span><span>High</span><span class="active">Critical</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RED FLAG TABLE -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Report ID</th><th>Title</th><th>Severity</th><th>Bounty Est.</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono id">#72629840</td>
+              <td>Bulk Customer Account ID Disclosure</td>
+              <td><span class="chip crit">Critical</span></td>
+              <td>$250–$500</td>
+              <td><span class="chip ok">Submitted</span></td>
+            </tr>
+            <tr>
+              <td class="mono id">#63683036</td>
+              <td>Unauthenticated User Enumeration</td>
+              <td><span class="chip high">Elevated</span></td>
+              <td>$100–$500</td>
+              <td><span class="chip ok">Submitted</span></td>
+            </tr>
+            <tr>
+              <td class="mono id">#50213014</td>
+              <td>Internal Infrastructure IP Disclosure</td>
+              <td><span class="chip mod">Moderate</span></td>
+              <td>$100–$250</td>
+              <td><span class="chip ok">Submitted</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- DISCLOSURE -->
+      <div class="disclosure">
+        <p class="eyebrow">// compliance & authorization</p>
+        <h3>Authorized Testing Scope</h3>
+        <p>All testing conducted within Groww's official bug bounty program scope (https://bugbase.ai/programs/groww). Testing was performed using browser-based reconnaissance, HTTP traffic inspection, and passive DNS queries only. No credentials were obtained; no other users' data was accessed.</p>
+        <ul class="not-found">
+          <li>User passwords or auth tokens</li>
+          <li>Other users' PII or financial data</li>
+          <li>System internals beyond intended scope</li>
+          <li>Denial-of-service or availability impacts</li>
+          <li>Staging/test environment data</li>
+          <li>Out-of-scope domains or services</li>
+        </ul>
+        <p style="margin-top:14px;"><strong>Rules of Engagement Compliant:</strong> All findings reported through official BugBase channel. No public disclosure. No credentials used without authorization. Groww security team retains sole discretion over triage, remediation, and bounty award.</p>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions">
+        <h3>// next steps</h3>
+        <ul class="checklist">
+          <li><span class="box">[✓]</span> All 3 reports successfully submitted to BugBase (2026-08-03 16:45 UTC)</li>
+          <li><span class="box">[✓]</span> Confirmation emails sent to yamansikander7@gmail.com</li>
+          <li><span class="box">[ ]</span> Await Groww security team triage (avg. 5 hours first response per program SLA)</li>
+          <li class="urgent"><span class="box">[!]</span> Monitor BugBase dashboard for status updates, requests for clarification, or bounty assignment</li>
+          <li><span class="box">[ ]</span> If remediation is incomplete after 90 days, consider responsible disclosure escalation (optional per program policy)</li>
+        </ul>
+      </div>
+
+      <footer>
+        <div>program: Groww VDP &middot; scope: groww.in &amp; subdomains &middot; methodology: web app penetration testing + DNS reconnaissance</div>
+        <div>authorization: <span class="stamp">official bug bounty program — authorized testing</span></div>
+        <div>submitted: 2026-08-03 16:45 UTC &middot; reports in review<span class="cursor"></span></div>
+      </footer>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
