@@ -52,8 +52,7 @@ export default function Navbar() {
       <nav className="relative mx-auto max-w-7xl px-5 md:px-8 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2 font-display font-bold text-lg tracking-wide">
           <ShieldHalf className="text-neon-red" size={22} />
-          <span className="text-white">YAMAN</span>
-          <span className="neon-text-red">REDTEAM</span>
+          <span className="text-white">NAWAF</span>
         </a>
 
         <div className="hidden lg:flex items-center gap-8 font-hack text-sm uppercase tracking-wider absolute left-1/2 -translate-x-1/2">
