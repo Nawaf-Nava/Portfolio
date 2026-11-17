@@ -1,29 +1,34 @@
 [
   {
-    "id": "vapt-hcltech-lab",
-    "title": "VAPT — Windows Enterprise Internship Lab",
-    "description": "Hands-on Vulnerability Assessment & Penetration Testing engagement on a simulated enterprise environment (Windows Server 2008 R2, Windows Server 2019, Windows 10, DVWA) during the HCLTech–Amity Cybersecurity Internship. Covered recon, SMB exploitation to SYSTEM-level Meterpreter access, post-exploitation credential harvesting, and web app testing for SQLi/XSS.",
-    "image": "/images/projects/vapt-exploit-thumbnail.jpeg",
-    "tech": ["Nmap", "Nessus", "Metasploit", "Burp Suite", "OWASP ZAP", "DVWA"],
-    "github": "https://github.com/Yaman-RedTeam/Vapt_Project_HCLTech",
-    "report": "/projects/vapt-hcltech-full-report.html"
+    "id": "nawaf-mokhtabar",
+    "title": "Nawaf Mokhtabar",
+    "category": "Education Platform",
+    "description": "An online learning and assessment project focused on making study activities and knowledge checks accessible through a dedicated web experience.",
+    "tech": ["Education", "Learning Tools", "Web Application"],
+    "url": "https://nawaf-mokhtabar-nawaf.onrender.com"
   },
   {
-    "id": "phishing-zphisher",
-    "title": "Phishing Attack Simulation & Defense Analysis",
-    "description": "A controlled phishing simulation project analyzing how credential-harvesting pages are deployed and defended against, built for an HCLTech–Amity Cybersecurity submission. Covers Zphisher setup, template-based fake login pages, and public tunneling — with defensive takeaways for recognizing and mitigating phishing attacks.",
-    "image": "/images/projects/phishing-cover-v2.png",
-    "tech": ["Zphisher", "Kali Linux", "Termux", "Cloudflare Tunnel"],
-    "github": "",
-    "report": "/projects/phishing-zphisher-report.pdf"
+    "id": "zracshe",
+    "title": "ZRACSHE",
+    "category": "Secure File Workflows",
+    "description": "A file-processing project focused on secure media workflows, format-aware handling, encryption, and compression.",
+    "tech": ["File Processing", "Encryption", "Compression", "Media Workflows"],
+    "url": "https://zracshe.vercel.app/"
   },
   {
-    "id": "groww-security-assessment",
-    "title": "Groww Fintech Platform — Security Assessment & Vulnerability Disclosure",
-    "description": "Authorized penetration testing engagement on Groww (investment fintech platform) through BugBase bug bounty program. Identified and reported 3 critical security vulnerabilities: CRITICAL-level Information Disclosure (sensitive user financial data via API endpoints), HIGH-level Infrastructure Reconnaissance (internal network details leaked through HTTP headers exposing RFC1918 private IPs), and MODERATE-level User Enumeration (email-based account existence detection via response analysis). Full responsible disclosure workflow completed with detailed impact analysis and bounty submission.",
-    "image": "/images/projects/groww-security-assessment.png",
-    "tech": ["Burp Suite", "API Reconnaissance", "Web Penetration Testing", "Responsible Disclosure", "Infrastructure Analysis"],
-    "github": "",
-    "report": "/projects/groww-bounty-summary.html"
+    "id": "sercal",
+    "title": "SERCAL",
+    "category": "Encrypted File Tools",
+    "description": "A web application for working with custom .ser files and transforming file content through security-focused processing workflows.",
+    "tech": ["Custom File Format", "Encryption", "File Transformation"],
+    "url": "https://sercal.vercel.app/"
+  },
+  {
+    "id": "nawaf-engine",
+    "title": "Nawaf Engine",
+    "category": "Research & Discovery",
+    "description": "An information-research engine designed to help users explore sources and organize findings through a dedicated search interface.",
+    "tech": ["Search", "OSINT Research", "Information Analysis"],
+    "url": "https://nawaf-engine.onrender.com/"
   }
 ]
