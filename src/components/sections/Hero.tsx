@@ -54,7 +54,7 @@ export default function Hero() {
             className="font-display font-black leading-[0.95] mb-5"
           >
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
-              YAMAN
+              NAWAF
             </span>
             <span className="block neon-text-red text-[2rem] md:text-5xl xl:text-6xl mt-2 tracking-wide">
               RED TEAM SPECIALIST
