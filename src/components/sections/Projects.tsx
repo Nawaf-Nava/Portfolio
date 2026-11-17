@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { Code2, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import projects from "@/data/projects.json";
 
@@ -21,10 +22,16 @@ export default function Projects() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="cyber-card overflow-hidden group"
             >
-              <div className="relative w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950/80 via-slate-950 to-red-950/60 flex items-center justify-center">
-                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.35),transparent_60%)]" />
-                <Code2 size={54} className="relative text-neon-cyan/80 transition-transform duration-500 group-hover:scale-110" />
-                <span className="absolute bottom-4 left-5 font-hack text-[11px] uppercase tracking-[0.3em] text-white/45">
+              <div className="relative w-full aspect-[16/9] overflow-hidden bg-slate-950">
+                <Image
+                  src={project.image}
+                  alt={`${project.title} project cover`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent" />
+                <span className="absolute bottom-4 left-5 font-hack text-[11px] uppercase tracking-[0.3em] text-white/80 drop-shadow">
                   {project.category}
                 </span>
               </div>
