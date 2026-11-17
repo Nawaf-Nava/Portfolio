@@ -46,7 +46,7 @@ export default function Hero() {
             variants={item}
             className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide"
           >
-            {"< "}Offensive Security Specialist{" />"}
+            {"< "}Student Developer{" />"}
           </motion.p>
 
           <motion.h1
@@ -57,7 +57,7 @@ export default function Hero() {
               NAWAF
             </span>
             <span className="block neon-text-red text-[2rem] md:text-5xl xl:text-6xl mt-2 tracking-wide">
-              RED TEAM SPECIALIST
+              AI & SOFTWARE PROJECTS
             </span>
           </motion.h1>
 
@@ -65,9 +65,8 @@ export default function Hero() {
             variants={item}
             className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl"
           >
-            Offensive Security <span className="text-neon-red">|</span> Ethical Hacker{" "}
-            <span className="text-neon-red">|</span> Penetration Tester{" "}
-            <span className="text-neon-red">|</span> Content Creator
+            Software Development <span className="text-neon-red">|</span> AI Projects{" "}
+            <span className="text-neon-red">|</span> Web Applications
           </motion.p>
 
           {/* Animated typing list */}
@@ -173,7 +172,7 @@ export default function Hero() {
           >
             <Image
               src="/images/hacker-cutout-hd.png"
-              alt="Hooded hacker with a glowing red Y"
+              alt="Nawaf portfolio artwork"
               width={754}
               height={866}
               quality={95}
