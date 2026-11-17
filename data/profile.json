@@ -1,14 +1,14 @@
 {
   "name": "Nawaf",
   "brand": "NAWAF",
-  "tagline": "Student | AI Projects | Software Development",
+  "tagline": "Cybersecurity Specialist | Penetration Testing",
   "titles": [
-    "Student Developer",
-    "AI Project Builder",
-    "Web Application Developer"
+    "Cybersecurity Specialist",
+    "Penetration Testing",
+    "Security Assessment"
   ],
-  "bio": "I am a student interested in building practical software and AI projects. My current work includes NAVA AI, ZANAX, and web-based tools. I focus on learning by designing, developing, testing, and improving real projects.",
-  "location": "",
+  "bio": "I am Nawaf, a cybersecurity specialist focused on penetration testing. I am interested in understanding how systems and applications work, identifying security weaknesses, and evaluating ways to strengthen their security. I also build and explore software and AI projects as part of my ongoing technical development.",
+  "location": "Sanaa, Yemen",
   "email": "mtlhashm@gmail.com",
   "resumeUrl": "",
   "youtubeChannelId": "",
@@ -18,7 +18,7 @@
     "os": "Linux Mint",
     "ip": "Not displayed",
     "status": "PROFILE ACTIVE",
-    "location": "Not specified"
+    "location": "Sanaa, Yemen"
   },
   "dashboard": {
     "threatLevel": "N/A",
@@ -28,8 +28,8 @@
     "uptime": "—",
     "logs": [
       "NAWAF PORTFOLIO INITIALIZED",
-      "PROFILE DATA LOADED",
-      "PROJECT DETAILS AWAITING VERIFIED CONTENT"
+      "CYBERSECURITY PROFILE LOADED",
+      "PENETRATION TESTING FOCUS"
     ]
   }
 }
