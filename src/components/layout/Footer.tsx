@@ -35,8 +35,7 @@ export default function Footer() {
         <div>
           <div className="flex items-center gap-2 font-display font-bold text-lg mb-3">
             <ShieldHalf className="text-neon-red" size={20} />
-            <span>YAMAN</span>
-            <span className="neon-text-red">REDTEAM</span>
+            <span>NAWAF</span>
           </div>
           <p className="text-white/50 text-sm leading-relaxed">
             {profile.tagline}
@@ -106,7 +105,7 @@ export default function Footer() {
             : "00:00:00"}
         </p>
         <p className="text-white/40 text-xs text-center">
-          © {new Date().getFullYear()} Yaman RedTeam. All Rights Reserved.
+          © {new Date().getFullYear()} Nawaf. All Rights Reserved.
         </p>
       </div>
     </footer>
