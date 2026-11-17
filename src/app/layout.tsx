@@ -24,21 +24,20 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Yaman RedTeam | Offensive Security & Ethical Hacking",
+  title: "Nawaf | Portfolio",
   description:
-    "Yaman RedTeam — Offensive Security Specialist, Ethical Hacker, Penetration Tester & Cybersecurity Content Creator. Explore certifications, projects, videos and skills.",
+    "Nawaf's personal portfolio. Explore projects, skills, certifications, and cybersecurity interests.",
   keywords: [
-    "Yaman RedTeam",
-    "Ethical Hacker",
-    "Penetration Tester",
-    "Red Team",
-    "Cybersecurity Portfolio",
-    "Bug Bounty",
+    "Nawaf",
+    "Portfolio",
+    "Cybersecurity",
+    "Ethical Hacking",
+    "Software Projects",
   ],
   openGraph: {
-    title: "Yaman RedTeam | Offensive Security & Ethical Hacking",
+    title: "Nawaf | Portfolio",
     description:
-      "Offensive Security Specialist, Ethical Hacker, Penetration Tester & Cybersecurity Content Creator.",
+      "Nawaf's personal portfolio featuring projects, skills, and technical interests.",
     type: "website",
   },
 };
