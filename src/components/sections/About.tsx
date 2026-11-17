@@ -8,6 +8,9 @@ import profile from "@/data/profile.json";
 
 const STAT_ICONS = [Timer, FileBadge, Award, MonitorPlay];
 
+type ProfileStat = { label: string; value: number; suffix: string };
+type TimelineItem = { year: string; title: string; description: string };
+
 export default function About() {
   return (
     <section id="about" className="relative py-24 px-5 md:px-8">
@@ -24,7 +27,7 @@ export default function About() {
           >
             <p className="text-white/70 leading-relaxed mb-6">{profile.bio}</p>
             <div className="grid grid-cols-2 gap-4">
-              {profile.stats.map((stat, i) => {
+              {(profile.stats as ProfileStat[]).map((stat, i) => {
                 const Icon = STAT_ICONS[i % STAT_ICONS.length];
                 return (
                   <div key={stat.label} className="glass rounded-lg p-4 text-center">
@@ -51,7 +54,7 @@ export default function About() {
 
           <div className="lg:col-span-3 relative pl-6">
             <div className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-neon-red via-neon-cyan to-transparent" />
-            {profile.timeline.map((item, i) => (
+            {(profile.timeline as TimelineItem[]).map((item, i) => (
               <motion.div
                 key={`${item.year}-${item.title}`}
                 initial={{ opacity: 0, x: 20 }}
