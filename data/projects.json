@@ -4,31 +4,52 @@
     "title": "Nawaf Mokhtabar",
     "category": "Education Platform",
     "description": "An online learning and assessment project focused on making study activities and knowledge checks accessible through a dedicated web experience.",
-    "tech": ["Education", "Learning Tools", "Web Application"],
-    "url": "https://nawaf-mokhtabar-nawaf.onrender.com"
+    "tech": [
+      "Education",
+      "Learning Tools",
+      "Web Application"
+    ],
+    "url": "https://nawaf-mokhtabar-nawaf.onrender.com",
+    "image": "/images/projects/nawaf-mokhtabar.svg"
   },
   {
     "id": "zracshe",
     "title": "ZRACSHE",
     "category": "Secure File Workflows",
     "description": "A file-processing project focused on secure media workflows, format-aware handling, encryption, and compression.",
-    "tech": ["File Processing", "Encryption", "Compression", "Media Workflows"],
-    "url": "https://zracshe.vercel.app/"
+    "tech": [
+      "File Processing",
+      "Encryption",
+      "Compression",
+      "Media Workflows"
+    ],
+    "url": "https://zracshe.vercel.app/",
+    "image": "/images/projects/zracshe.svg"
   },
   {
     "id": "sercal",
     "title": "SERCAL",
     "category": "Encrypted File Tools",
     "description": "A web application for working with custom .ser files and transforming file content through security-focused processing workflows.",
-    "tech": ["Custom File Format", "Encryption", "File Transformation"],
-    "url": "https://sercal.vercel.app/"
+    "tech": [
+      "Custom File Format",
+      "Encryption",
+      "File Transformation"
+    ],
+    "url": "https://sercal.vercel.app/",
+    "image": "/images/projects/sercal.svg"
   },
   {
     "id": "nawaf-engine",
     "title": "Nawaf Engine",
     "category": "Research & Discovery",
     "description": "An information-research engine designed to help users explore sources and organize findings through a dedicated search interface.",
-    "tech": ["Search", "OSINT Research", "Information Analysis"],
-    "url": "https://nawaf-engine.onrender.com/"
+    "tech": [
+      "Search",
+      "OSINT Research",
+      "Information Analysis"
+    ],
+    "url": "https://nawaf-engine.onrender.com/",
+    "image": "/images/projects/nawaf-engine.svg"
   }
 ]
