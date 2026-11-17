@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { Code2, FileText } from "lucide-react";
+import { Code2, ExternalLink } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
 import projects from "@/data/projects.json";
 
@@ -10,7 +9,7 @@ export default function Projects() {
   return (
     <section id="projects" className="relative py-24 px-5 md:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Built &amp; Battle-Tested" title="Projects" />
+        <SectionHeading eyebrow="Selected Work" title="Projects" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {projects.map((project, i) => (
@@ -22,15 +21,12 @@ export default function Projects() {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="cyber-card overflow-hidden group"
             >
-              <div className="relative w-full aspect-[16/9] bg-white/5 overflow-hidden">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  sizes="(min-width: 768px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              <div className="relative w-full aspect-[16/9] overflow-hidden bg-gradient-to-br from-cyan-950/80 via-slate-950 to-red-950/60 flex items-center justify-center">
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.35),transparent_60%)]" />
+                <Code2 size={54} className="relative text-neon-cyan/80 transition-transform duration-500 group-hover:scale-110" />
+                <span className="absolute bottom-4 left-5 font-hack text-[11px] uppercase tracking-[0.3em] text-white/45">
+                  {project.category}
+                </span>
               </div>
               <div className="p-6">
                 <h3 className="font-display font-bold text-lg mb-2 neon-text-cyan">
@@ -47,28 +43,14 @@ export default function Projects() {
                     </span>
                   ))}
                 </div>
-                <div className="flex gap-3">
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md border border-white/15 text-xs font-hack uppercase tracking-wider hover:border-neon-cyan hover:text-neon-cyan transition-colors"
-                    >
-                      <Code2 size={14} /> GitHub
-                    </a>
-                  )}
-                  {project.report && (
-                    <a
-                      href={project.report}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-neon-red text-xs font-hack uppercase tracking-wider hover:shadow-[0_0_16px_rgba(255,0,60,0.6)] transition-shadow"
-                    >
-                      <FileText size={14} /> View Report
-                    </a>
-                  )}
-                </div>
+                <a
+                  href={project.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-md bg-neon-red text-xs font-hack uppercase tracking-wider hover:shadow-[0_0_16px_rgba(255,0,60,0.6)] transition-shadow"
+                >
+                  <ExternalLink size={14} /> Open Project
+                </a>
               </div>
             </motion.div>
           ))}
