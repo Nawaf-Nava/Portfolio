@@ -1,27 +1,8 @@
 import type { Metadata } from "next";
-import { Orbitron, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/ui/CustomCursor";
-
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  subsets: ["latin"],
-  weight: ["500", "700", "900"],
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Nawaf | Portfolio",
@@ -48,10 +29,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${orbitron.variable} ${inter.variable} ${jetbrains.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
         <CustomCursor />
         <Navbar />
