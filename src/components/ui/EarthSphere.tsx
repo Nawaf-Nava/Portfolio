@@ -9,6 +9,7 @@ import {
   CatmullRomCurve3,
   TubeGeometry,
   type Mesh,
+  type Group,
 } from "three";
 
 
@@ -139,10 +140,14 @@ function DataArc({
 
 function RotatingEarth() {
   const texture = useMemo(() => createEarthTexture(), []);
+  const globeRef = useRef<Group>(null);
 
+  useFrame((_, delta) => {
+    if (globeRef.current) globeRef.current.rotation.y += delta * 0.045;
+  });
 
   return (
-    <group>
+    <group ref={globeRef}>
       <mesh>
         <sphereGeometry args={[RADIUS, 72, 72]} />
         <meshBasicMaterial map={texture ?? undefined} color={texture ? "#ffffff" : "#0b4c82"} toneMapped={false} />
