@@ -21,7 +21,7 @@ export default function About() {
   const [isTyping, setIsTyping] = useState(false);
 
   const bioText = profile.bio;
-  const sentenceEnd = bioText.search(/[.!?](?:\\s|$)/);
+  const sentenceEnd = bioText.search(/[.!?](?:\s|$)/);
   const introEnd = sentenceEnd >= 0 ? sentenceEnd + 1 : Math.min(bioText.length, 120);
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
