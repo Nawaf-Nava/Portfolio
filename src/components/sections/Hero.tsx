@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { motion, type Variants } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
@@ -15,7 +14,6 @@ const container: Variants = {
   },
 };
 
-const EarthSphere = dynamic(() => import("@/components/ui/EarthSphere"), { ssr: false });
 
 const item: Variants = {
   hidden: { opacity: 0, y: 18 },
@@ -138,10 +136,6 @@ export default function Hero() {
           {/* Volumetric red glow behind the figure */}
           <div className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red animate-glow-pulse rounded-full" />
 
-          {/* True 3D Earth sphere rotating on its own axis */}
-          <div className="pointer-events-none absolute left-1/2 top-[37%] -translate-x-1/2 -translate-y-1/2 w-[128%] max-w-[780px] aspect-square">
-            <EarthSphere />
-          </div>
 
           <motion.div
             animate={{ y: [0, -8, 0] }}
