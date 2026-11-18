@@ -123,6 +123,10 @@ async function scrapeChannelPage(channelUrl: string): Promise<ScrapedChannelData
   const avatarThumbs = asArr(avatar?.thumbnails) ?? [];
   const avatarUrl =
     asStr(asObj(avatarThumbs[avatarThumbs.length - 1])?.url).replace(/\\u0026/g, "&") || null;
+  const resolvedAvatarUrl =
+    avatarUrl ??
+    html.match(/<meta property="og:image" content="([^"]+)"/)?.[1]?.replace(/&amp;/g, "&") ??
+    null;
 
   const lockups: Json[] = [];
   findAll(data, "lockupViewModel", lockups);
@@ -167,7 +171,7 @@ async function scrapeChannelPage(channelUrl: string): Promise<ScrapedChannelData
     });
   }
 
-  return { channelId, avatarUrl, videos };
+  return { channelId, avatarUrl: resolvedAvatarUrl, videos };
 }
 
 // Fetches the eJPT playlist's RSS feed and builds a single card that embeds
