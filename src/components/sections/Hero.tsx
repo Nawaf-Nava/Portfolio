@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { motion, type Variants } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
+
+const EarthSphere = dynamic(() => import("@/components/ui/EarthSphere"), { ssr: false });
 
 const container: Variants = {
   hidden: {},
@@ -133,6 +136,10 @@ export default function Hero() {
           transition={{ duration: 1.1, ease: "easeOut" }}
           className="order-1 lg:order-2 relative"
         >
+          <div className="absolute inset-0 -z-10 pointer-events-none">
+            <EarthSphere />
+          </div>
+
           {/* Volumetric red glow behind the figure */}
           <div className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red animate-glow-pulse rounded-full" />
 
