@@ -138,8 +138,9 @@ export default function Hero() {
           {/* Realistic Earth (your image) behind the hooded figure */}
           <div className="pointer-events-none absolute left-1/2 top-[37%] -translate-x-1/2 -translate-y-1/2 w-[128%] max-w-[780px]">
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+              animate={{ scaleX: [1, 0.08, -1, -0.08, 1] }}
+              transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
+              style={{ transformPerspective: 1000, transformStyle: "preserve-3d" }}
               className="origin-center"
             >
               <Image
