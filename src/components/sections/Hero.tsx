@@ -1,17 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import { motion, type Variants } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
-
-// WebGL wireframe globe is client-only — skip SSR so three.js never runs on the server.
-const HeroGlobe = dynamic(() => import("@/components/ui/HeroGlobe"), {
-  ssr: false,
-});
 
 const container: Variants = {
   hidden: {},
@@ -29,12 +23,7 @@ export default function Hero() {
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background layers */}
-      <div className="absolute inset-0 -z-30 bg-[#060607]" />
       <div className="absolute inset-0 -z-20 grid-bg-red" />
-      {/* Ambient 3D particle globe */}
-      <div className="absolute inset-0 -z-20 opacity-70 pointer-events-none">
-        <HeroGlobe />
-      </div>
       <div className="absolute top-1/3 right-[8%] -z-20 w-[520px] h-[520px] max-w-[70vw] rounded-full hero-glow-red opacity-60" />
       <div className="absolute -left-40 top-1/2 -z-20 w-[420px] h-[420px] rounded-full bg-neon-red/5 blur-[130px]" />
       <div className="absolute inset-0 -z-10 hero-vignette" />
