@@ -59,7 +59,7 @@ function DataArc({
   return (
     <group>
       <mesh geometry={geometry}>
-        <meshBasicMaterial color={color} transparent opacity={0.72} />
+        <meshBasicMaterial color={color} transparent opacity={0.78} />
       </mesh>
       <mesh ref={pulseRef}>
         <sphereGeometry args={[0.027, 12, 12]} />
@@ -85,10 +85,36 @@ function RotatingEarth() {
 
   return (
     <group ref={globeRef}>
+      {/* Daylight Earth surface */}
       <mesh>
-        <sphereGeometry args={[RADIUS, 128, 128]} />
+        <sphereGeometry args={[RADIUS, 160, 160]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
+
+      {/* Fine cyan geographic grid */}
+      <mesh>
+        <sphereGeometry args={[RADIUS * 1.006, 40, 28]} />
+        <meshBasicMaterial
+          color="#45cfff"
+          wireframe
+          transparent
+          opacity={0.075}
+          depthWrite={false}
+        />
+      </mesh>
+
+      {/* Thin atmospheric rim */}
+      <mesh>
+        <sphereGeometry args={[RADIUS * 1.025, 96, 96]} />
+        <meshBasicMaterial
+          color="#168dff"
+          wireframe
+          transparent
+          opacity={0.055}
+          depthWrite={false}
+        />
+      </mesh>
+
       <DataArc coordinates={NETWORK_LINKS[0]} color="#278dff" phase={0} />
       <DataArc coordinates={NETWORK_LINKS[1]} color="#ff3b4f" phase={0.28} />
       <DataArc coordinates={NETWORK_LINKS[2]} color="#278dff" phase={0.56} />
