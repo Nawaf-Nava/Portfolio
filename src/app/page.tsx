@@ -1,5 +1,4 @@
-import Hero from "@/components/sections/Hero";
-import About from "@/components/sections/About";
+import IntroSections from "@/components/sections/IntroSections";
 import Skills from "@/components/sections/Skills";
 import Projects from "@/components/sections/Projects";
 import Videos from "@/components/sections/Videos";
@@ -12,8 +11,7 @@ import CyberDashboard from "@/components/sections/CyberDashboard";
 export default function Home() {
   return (
     <>
-      <Hero />
-      <About />
+      <IntroSections />
       <Certifications />
       <Videos />
       <Skills />
