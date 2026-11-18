@@ -17,12 +17,22 @@ export default async function Videos() {
             href={channel}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md neon-border-red text-neon-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors self-start md:mb-4"
+            aria-label="Visit Nawaf YouTube channel"
+            className="inline-flex items-center justify-center self-start md:mb-4 rounded-full transition-transform hover:scale-105"
           >
             {avatarUrl ? (
-              <Image src={avatarUrl} alt="Nawaf YouTube channel" width={28} height={28} unoptimized className="h-7 w-7 rounded-full object-cover" />
+              <Image
+                src={avatarUrl}
+                alt="Nawaf YouTube channel"
+                width={40}
+                height={40}
+                unoptimized
+                className="h-10 w-10 rounded-full object-cover border-2 border-neon-red shadow-[0_0_12px_rgba(255,0,60,0.35)]"
+              />
             ) : (
-              <span className="text-[10px]">NAWAF</span>
+              <span className="h-10 w-10 rounded-full border-2 border-neon-red flex items-center justify-center text-[10px] font-hack text-neon-red">
+                NAWAF
+              </span>
             )}
           </a>
         </div>
