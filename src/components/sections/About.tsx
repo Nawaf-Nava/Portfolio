@@ -26,6 +26,7 @@ export default function About() {
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
   const canReadMore = hasStarted && !isExpanded && !isTyping && displayedBio.length === introText.length;
+  const showReadMore = hasStarted && displayedBio.length >= introText.length;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -94,7 +95,7 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-2 cyber-card p-6"
           >
-            <p className="text-neon-cyan drop-shadow-[0_0_8px_rgba(0,229,255,0.28)] leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
+            <p className="bg-[linear-gradient(110deg,#00e5ff_0%,#ff1744_48%,#05070d_82%,#00e5ff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,229,255,0.28)] leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
               {displayedBio}
               {isTyping && (
                 <span
@@ -120,13 +121,15 @@ export default function About() {
                 );
               })}
             </div>
-            {canReadMore && (
+            {showReadMore && (
               <button
                 type="button"
                 onClick={handleReadMore}
-                className="mt-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors"
+                disabled={isExpanded}
+                aria-live="polite"
+                className="mt-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors disabled:opacity-80 disabled:cursor-default"
               >
-                Read More
+                {isExpanded ? (displayedBio.length < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
               </button>
             )}
           </motion.div>
