@@ -7,6 +7,9 @@
   --color-cyan: #00e5ff;
   --color-white: #ffffff;
   --color-green: #00ff9c;
+  --font-orbitron: "Orbitron";
+  --font-inter: "Inter";
+  --font-jetbrains: "JetBrains Mono";
 }
 
 @theme inline {
