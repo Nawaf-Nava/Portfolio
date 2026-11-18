@@ -2,7 +2,14 @@
 
 import { Suspense, useMemo, useRef } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { TextureLoader, Vector3, CatmullRomCurve3, TubeGeometry, type Mesh } from "three";
+import {
+  TextureLoader,
+  Vector3,
+  CatmullRomCurve3,
+  TubeGeometry,
+  type Group,
+  type Mesh,
+} from "three";
 
 const EARTH_TEXTURE =
   "https://upload.wikimedia.org/wikipedia/commons/b/b3/Solarsystemscope_texture_8k_earth_nightmap.jpg";
@@ -69,16 +76,16 @@ function DataArc({
 }
 
 function RotatingEarth() {
-  const earthRef = useRef<Mesh>(null);
+  const globeRef = useRef<Group>(null);
   const texture = useLoader(TextureLoader, EARTH_TEXTURE);
 
   useFrame((_, delta) => {
-    if (earthRef.current) earthRef.current.rotation.y += delta * 0.045;
+    if (globeRef.current) globeRef.current.rotation.y += delta * 0.045;
   });
 
   return (
-    <group>
-      <mesh ref={earthRef}>
+    <group ref={globeRef}>
+      <mesh>
         <sphereGeometry args={[RADIUS, 128, 128]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
