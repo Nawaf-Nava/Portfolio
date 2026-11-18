@@ -5,8 +5,7 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import type { Mesh } from "three";
 
-const EARTH_TEXTURE =
-  "https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg";
+const EARTH_TEXTURE = "/images/earth-photo.png";
 
 function RotatingEarth() {
   const earthRef = useRef<Mesh>(null);
@@ -20,19 +19,11 @@ function RotatingEarth() {
     <group>
       <mesh ref={earthRef}>
         <sphereGeometry args={[2.05, 96, 96]} />
-        <meshStandardMaterial
-          map={texture}
-          roughness={0.92}
-          metalness={0.02}
-        />
-      </mesh>
-      <mesh scale={1.035}>
-        <sphereGeometry args={[2.05, 64, 64]} />
         <meshBasicMaterial
-          color="#54cfff"
+          map={texture}
           transparent
-          opacity={0.075}
-          side={2}
+          alphaTest={0.025}
+          toneMapped={false}
         />
       </mesh>
     </group>
