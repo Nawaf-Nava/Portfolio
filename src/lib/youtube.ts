@@ -105,14 +105,19 @@ async function scrapeChannelPage(channelUrl: string): Promise<ScrapedChannelData
   if (!res.ok) return null;
 
   const html = await res.text();
-  const match = html.match(/var ytInitialData = (\{[\s\S]*?\});<\/script>/);
-  if (!match) return null;
-
-  const data = JSON.parse(match[1]) as Json;
   const channelId =
     html.match(/"externalId":"(UC[A-Za-z0-9_-]{22})"/)?.[1] ??
     html.match(/"channelId":"(UC[A-Za-z0-9_-]{22})"/)?.[1] ??
     "";
+  const match = html.match(/(?:var\s+)?ytInitialData\s*=\s*(\{[\s\S]*?\});/);
+  let data: Json = {};
+  if (match) {
+    try {
+      data = JSON.parse(match[1]) as Json;
+    } catch {
+      data = {};
+    }
+  }
 
   const metadataNodes: Json[] = [];
   findAll(data, "channelMetadataRenderer", metadataNodes);
@@ -171,6 +176,7 @@ async function scrapeChannelPage(channelUrl: string): Promise<ScrapedChannelData
     });
   }
 
+  if (!channelId && !resolvedAvatarUrl && videos.length === 0) return null;
   return { channelId, avatarUrl: resolvedAvatarUrl, videos };
 }
 
