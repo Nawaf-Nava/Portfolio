@@ -137,15 +137,21 @@ export default function Hero() {
 
           {/* Realistic Earth (your image) behind the hooded figure */}
           <div className="pointer-events-none absolute left-1/2 top-[37%] -translate-x-1/2 -translate-y-1/2 w-[128%] max-w-[780px]">
-            <Image
-              src="/images/earth-photo.png"
-              alt="Earth from space at night"
-              width={1028}
-              height={1028}
-              priority
-              sizes="(min-width: 1024px) 780px, 130vw"
-              className="w-full h-auto select-none"
-            />
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+              className="origin-center"
+            >
+              <Image
+                src="/images/earth-photo.png"
+                alt="Earth from space at night"
+                width={1028}
+                height={1028}
+                priority
+                sizes="(min-width: 1024px) 780px, 130vw"
+                className="w-full h-auto select-none"
+              />
+            </motion.div>
           </div>
 
           <motion.div
