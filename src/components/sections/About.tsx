@@ -93,9 +93,10 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-2 cyber-card p-6"
+            className="lg:col-span-3 relative py-3 lg:pr-10"
           >
-            <p className="bg-[linear-gradient(110deg,#00e5ff_0%,#ff1744_48%,#05070d_82%,#00e5ff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,229,255,0.28)] leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
+            <div className="pointer-events-none absolute -inset-x-8 top-0 -z-10 h-64 bg-[radial-gradient(ellipse_at_center,rgba(0,229,255,0.07),rgba(255,0,60,0.035)_48%,transparent_75%)] blur-2xl" />
+            <p className="max-w-4xl bg-[linear-gradient(110deg,#00e5ff_0%,#ff1744_48%,#05070d_82%,#00e5ff_100%)] bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(0,229,255,0.28)] text-base md:text-lg leading-8 md:leading-9 tracking-wide mb-9 whitespace-pre-wrap break-words min-h-[3.5rem]">
               {displayedBio}
               {isTyping && (
                 <span
@@ -105,7 +106,7 @@ export default function About() {
               )}
             </p>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
               {(profile.stats as ProfileStat[]).map((stat, i) => {
                 const Icon = STAT_ICONS[i % STAT_ICONS.length];
                 return (
@@ -134,7 +135,7 @@ export default function About() {
             )}
           </motion.div>
 
-          <div className="lg:col-span-3 relative pl-6">
+          <div className="lg:col-span-2 relative pl-6">
             <div className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-neon-red via-neon-cyan to-transparent" />
             {(profile.timeline as TimelineItem[]).map((item, i) => (
               <motion.div
