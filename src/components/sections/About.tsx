@@ -97,16 +97,6 @@ export default function About() {
               )}
             </p>
 
-            {canReadMore && (
-              <button
-                type="button"
-                onClick={handleReadMore}
-                className="mb-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors"
-              >
-                Read More
-              </button>
-            )}
-
             <div className="grid grid-cols-2 gap-4">
               {(profile.stats as ProfileStat[]).map((stat, i) => {
                 const Icon = STAT_ICONS[i % STAT_ICONS.length];
@@ -123,6 +113,15 @@ export default function About() {
                 );
               })}
             </div>
+            {canReadMore && (
+              <button
+                type="button"
+                onClick={handleReadMore}
+                className="mt-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors"
+              >
+                Read More
+              </button>
+            )}
           </motion.div>
 
           <div className="lg:col-span-3 relative pl-6">
