@@ -136,7 +136,7 @@ export default function Hero() {
           transition={{ duration: 1.1, ease: "easeOut" }}
           className="order-1 lg:order-2 relative"
         >
-          <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute inset-0 z-0 pointer-events-none">
             <EarthSphere />
           </div>
 
@@ -147,7 +147,7 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="relative mx-auto w-full max-w-[540px]"
+            className="relative z-10 mx-auto w-full max-w-[540px]"
           >
             <Image
               src="/images/hacker-cutout-hd.png"
@@ -166,7 +166,7 @@ export default function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.8 }}
-            className="pointer-events-none absolute inset-0 hidden sm:block font-hack select-none"
+            className="pointer-events-none absolute inset-0 z-20 hidden sm:block font-hack select-none"
           >
             <span className="absolute top-[3%] right-[2%] text-[11px] tracking-[0.25em] text-neon-cyan/70">
               TARGET_01
