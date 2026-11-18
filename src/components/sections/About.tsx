@@ -21,7 +21,7 @@ export default function About() {
   const [isTyping, setIsTyping] = useState(false);
 
   const bioText = profile.bio;
-  const sentenceEnd = bioText.search(/[.!?](?:\s|$)/);
+  const sentenceEnd = bioText.search(/[.!?](?:\\s|$)/);
   const introEnd = sentenceEnd >= 0 ? sentenceEnd + 1 : Math.min(bioText.length, 120);
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
@@ -51,27 +51,34 @@ export default function About() {
   }, [hasStarted]);
 
   useEffect(() => {
-    if (!hasStarted || displayedBio.length >= targetText.length) {
+    if (!hasStarted) return;
+
+    // Resume from the exact number of characters already displayed.
+    typingIndexRef.current = displayedBio.length;
+    if (typingIndexRef.current >= targetText.length) {
       setIsTyping(false);
       return;
     }
 
     setIsTyping(true);
     const interval = window.setInterval(() => {
-      typingIndexRef.current = Math.min(typingIndexRef.current + 1, targetText.length);
-      setDisplayedBio(targetText.slice(0, typingIndexRef.current));
+      const nextIndex = Math.min(typingIndexRef.current + 1, targetText.length);
+      typingIndexRef.current = nextIndex;
+      setDisplayedBio(targetText.slice(0, nextIndex));
 
-      if (typingIndexRef.current >= targetText.length) {
+      if (nextIndex >= targetText.length) {
         window.clearInterval(interval);
         setIsTyping(false);
       }
-    }, 24);
+    }, 28);
 
     return () => window.clearInterval(interval);
   }, [hasStarted, isExpanded, targetText]);
 
   const handleReadMore = () => {
-    if (canReadMore) setIsExpanded(true);
+    if (!canReadMore) return;
+    typingIndexRef.current = displayedBio.length;
+    setIsExpanded(true);
   };
 
   return (
@@ -87,12 +94,12 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-2 cyber-card p-6"
           >
-            <p className="text-white/70 leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
+            <p className="text-neon-cyan drop-shadow-[0_0_8px_rgba(0,229,255,0.28)] leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
               {displayedBio}
               {isTyping && (
                 <span
                   aria-hidden="true"
-                  className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-red animate-pulse"
+                  className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-cyan shadow-[0_0_8px_#00e5ff] animate-pulse"
                 />
               )}
             </p>
