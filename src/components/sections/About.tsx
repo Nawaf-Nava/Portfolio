@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Award, FileBadge, Timer, MonitorPlay } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -12,8 +13,69 @@ type ProfileStat = { label: string; value: number; suffix: string };
 type TimelineItem = { year: string; title: string; description: string };
 
 export default function About() {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const typingIndexRef = useRef(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [displayedBio, setDisplayedBio] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  const bioText = profile.bio;
+  const sentenceEnd = bioText.search(/[.!?](?:\\s|$)/);
+  const introEnd = sentenceEnd >= 0 ? sentenceEnd + 1 : Math.min(bioText.length, 120);
+  const introText = bioText.slice(0, introEnd);
+  const targetText = isExpanded ? bioText : introText;
+  const canReadMore = hasStarted && !isExpanded && !isTyping && displayedBio.length === introText.length;
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section || hasStarted) return;
+
+    if (typeof IntersectionObserver === "undefined") {
+      setHasStarted(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!hasStarted || displayedBio.length >= targetText.length) {
+      setIsTyping(false);
+      return;
+    }
+
+    setIsTyping(true);
+    const interval = window.setInterval(() => {
+      typingIndexRef.current = Math.min(typingIndexRef.current + 1, targetText.length);
+      setDisplayedBio(targetText.slice(0, typingIndexRef.current));
+
+      if (typingIndexRef.current >= targetText.length) {
+        window.clearInterval(interval);
+        setIsTyping(false);
+      }
+    }, 24);
+
+    return () => window.clearInterval(interval);
+  }, [hasStarted, isExpanded, targetText]);
+
+  const handleReadMore = () => {
+    if (canReadMore) setIsExpanded(true);
+  };
+
   return (
-    <section id="about" className="relative py-24 px-5 md:px-8">
+    <section ref={sectionRef} id="about" className="relative py-24 px-5 md:px-8">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Who Am I" title="About Me" />
 
@@ -25,7 +87,26 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-2 cyber-card p-6"
           >
-            <p className="text-white/70 leading-relaxed mb-6">{profile.bio}</p>
+            <p className="text-white/70 leading-relaxed mb-6 whitespace-pre-wrap break-words min-h-[3.5rem]">
+              {displayedBio}
+              {isTyping && (
+                <span
+                  aria-hidden="true"
+                  className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-red animate-pulse"
+                />
+              )}
+            </p>
+
+            {canReadMore && (
+              <button
+                type="button"
+                onClick={handleReadMore}
+                className="mb-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors"
+              >
+                Read More
+              </button>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               {(profile.stats as ProfileStat[]).map((stat, i) => {
                 const Icon = STAT_ICONS[i % STAT_ICONS.length];
@@ -42,14 +123,6 @@ export default function About() {
                 );
               })}
             </div>
-            <a
-              href={profile.resumeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors"
-            >
-              Read More
-            </a>
           </motion.div>
 
           <div className="lg:col-span-3 relative pl-6">
