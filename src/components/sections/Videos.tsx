@@ -1,11 +1,11 @@
-import { MonitorPlay } from "lucide-react";
+import Image from "next/image";
 import SectionHeading from "@/components/ui/SectionHeading";
 import VideoGallery from "@/components/ui/VideoGallery";
-import { getLatestVideos } from "@/lib/youtube";
+import { getYoutubeChannelData } from "@/lib/youtube";
 import socials from "@/data/socials.json";
 
 export default async function Videos() {
-  const videos = await getLatestVideos();
+  const { videos, avatarUrl } = await getYoutubeChannelData();
   const channel = socials.find((s) => s.name === "YouTube")?.url ?? "#";
 
   return (
@@ -19,7 +19,11 @@ export default async function Videos() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md neon-border-red text-neon-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors self-start md:mb-4"
           >
-            <MonitorPlay size={15} /> Subscribe
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt="Nawaf YouTube channel" width={28} height={28} unoptimized className="h-7 w-7 rounded-full object-cover" />
+            ) : (
+              <span className="text-[10px]">NAWAF</span>
+            )}
           </a>
         </div>
       </div>

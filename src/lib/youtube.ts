@@ -1,5 +1,6 @@
 import profile from "@/data/profile.json";
 import videosFallback from "@/data/videos.json";
+import socials from "@/data/socials.json";
 
 export type VideoItem = {
   id: string;
@@ -89,27 +90,57 @@ function asStr(v: Json | undefined): string {
  * with content type VIDEO is a genuine long-form upload; Shorts use a
  * different renderer entirely, so no separate Shorts filter is needed here.
  */
-async function scrapeChannelVideos(channelId: string): Promise<VideoItem[] | null> {
-  const res = await fetch(`https://www.youtube.com/channel/${channelId}/videos`, {
+type ScrapedChannelData = {
+  channelId: string;
+  avatarUrl: string | null;
+  videos: VideoItem[];
+};
+
+async function scrapeChannelPage(channelUrl: string): Promise<ScrapedChannelData | null> {
+  const pageUrl = channelUrl.replace(/\/$/, "") + "/videos";
+  const res = await fetch(pageUrl, {
     headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
     next: { revalidate: 3600 },
   });
   if (!res.ok) return null;
-  const html = await res.text();
-  const match = html.match(/var ytInitialData = (\{[\s\S]*?\});<\/script>/);
-  if (!match) return null;
 
-  const data = JSON.parse(match[1]) as Json;
+  const html = await res.text();
+  const channelId =
+    html.match(/"externalId":"(UC[A-Za-z0-9_-]{22})"/)?.[1] ??
+    html.match(/"channelId":"(UC[A-Za-z0-9_-]{22})"/)?.[1] ??
+    "";
+  const match = html.match(/(?:var\s+)?ytInitialData\s*=\s*(\{[\s\S]*?\});/);
+  let data: Json = {};
+  if (match) {
+    try {
+      data = JSON.parse(match[1]) as Json;
+    } catch {
+      data = {};
+    }
+  }
+
+  const metadataNodes: Json[] = [];
+  findAll(data, "channelMetadataRenderer", metadataNodes);
+  const headerNodes: Json[] = [];
+  if (metadataNodes.length === 0) findAll(data, "c4TabbedHeaderRenderer", headerNodes);
+  const channelMetadata = asObj(metadataNodes[0] ?? headerNodes[0]);
+  const avatar = asObj(channelMetadata?.avatar);
+  const avatarThumbs = asArr(avatar?.thumbnails) ?? [];
+  const avatarUrl =
+    asStr(asObj(avatarThumbs[avatarThumbs.length - 1])?.url).replace(/\\u0026/g, "&") || null;
+  const resolvedAvatarUrl =
+    avatarUrl ??
+    html.match(/<meta property="og:image" content="([^"]+)"/)?.[1]?.replace(/&amp;/g, "&") ??
+    null;
+
   const lockups: Json[] = [];
   findAll(data, "lockupViewModel", lockups);
-
   const seen = new Set<string>();
   const videos: VideoItem[] = [];
 
   for (const raw of lockups) {
     const lockup = asObj(raw);
     if (!lockup) continue;
-
     const id = asStr(lockup.contentId);
     const contentType = asStr(lockup.contentType);
     if (!id || seen.has(id) || contentType !== "LOCKUP_CONTENT_TYPE_VIDEO") continue;
@@ -137,15 +168,16 @@ async function scrapeChannelVideos(channelId: string): Promise<VideoItem[] | nul
     videos.push({
       id,
       title,
-      thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+      thumbnail: "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg",
       views,
       date,
       duration,
-      url: `https://www.youtube.com/watch?v=${id}`,
+      url: "https://www.youtube.com/watch?v=" + id,
     });
   }
 
-  return videos.length > 0 ? videos : null;
+  if (!channelId && !resolvedAvatarUrl && videos.length === 0) return null;
+  return { channelId, avatarUrl: resolvedAvatarUrl, videos };
 }
 
 // Fetches the eJPT playlist's RSS feed and builds a single card that embeds
@@ -218,24 +250,38 @@ async function getVideosViaRss(channelId: string): Promise<VideoItem[] | null> {
 }
 
 /**
- * Fetches the channel's real videos (Shorts and INE/eJPT videos excluded —
- * the eJPT playlist is added as its own card instead). Set
- * `youtubeChannelId` in data/profile.json (starts with "UC..."). Falls back
- * to data/videos.json when unset or unreachable, so the site always renders.
- * Revalidates hourly; every Netlify rebuild also refreshes.
+ * Resolves the public channel URL, then returns the real uploads and channel avatar.
  */
-export async function getLatestVideos(): Promise<VideoItem[]> {
-  const channelId = profile.youtubeChannelId;
-  if (!channelId) return videosFallback;
+export async function getYoutubeChannelData(): Promise<{
+  videos: VideoItem[];
+  avatarUrl: string | null;
+}> {
+  const channelUrl = socials.find((item) => item.name === "YouTube")?.url;
+  const fallbackVideos = videosFallback.filter((video) => !video.id.startsWith("pending-"));
+  if (!channelUrl) return { videos: fallbackVideos, avatarUrl: null };
 
   try {
-    const videos =
-      (await scrapeChannelVideos(channelId)) ?? (await getVideosViaRss(channelId));
-    if (!videos || videos.length === 0) return videosFallback;
+    const scraped = await scrapeChannelPage(channelUrl);
+    if (scraped?.videos.length) {
+      const playlistCard = await getEjptPlaylistCard();
+      return {
+        videos: playlistCard ? [...scraped.videos, playlistCard] : scraped.videos,
+        avatarUrl: scraped.avatarUrl,
+      };
+    }
 
-    const playlistCard = await getEjptPlaylistCard();
-    return playlistCard ? [...videos, playlistCard] : videos;
+    const channelId = profile.youtubeChannelId || scraped?.channelId || "";
+    const rssVideos = channelId ? await getVideosViaRss(channelId) : null;
+    return {
+      videos: rssVideos?.length ? rssVideos : fallbackVideos,
+      avatarUrl: scraped?.avatarUrl ?? null,
+    };
   } catch {
-    return videosFallback;
+    return { videos: fallbackVideos, avatarUrl: null };
   }
+}
+
+export async function getLatestVideos(): Promise<VideoItem[]> {
+  const data = await getYoutubeChannelData();
+  return data.videos;
 }
