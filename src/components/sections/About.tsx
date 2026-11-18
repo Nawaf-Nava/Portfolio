@@ -95,15 +95,21 @@ export default function About() {
             transition={{ duration: 0.6 }}
             className="lg:col-span-3 relative py-3 lg:pr-10"
           >
-            <p className="max-w-4xl bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide mb-9 whitespace-pre-wrap break-words min-h-[3.5rem]">
-              {displayedBio}
-              {isTyping && (
-                <span
-                  aria-hidden="true"
-                  className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-cyan shadow-[0_0_8px_#00e5ff] animate-pulse"
-                />
-              )}
-            </p>
+            <div className="relative max-w-4xl mb-9">
+              {/* Reserve the final text height so typing never pushes the layout. */}
+              <p aria-hidden="true" className="invisible text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
+                {bioText}
+              </p>
+              <p className="absolute inset-0 bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
+                {displayedBio}
+                {isTyping && (
+                  <span
+                    aria-hidden="true"
+                    className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-cyan shadow-[0_0_8px_#00e5ff] animate-pulse"
+                  />
+                )}
+              </p>
+            </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
               {(profile.stats as ProfileStat[]).map((stat, i) => {
