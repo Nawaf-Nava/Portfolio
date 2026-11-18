@@ -12,9 +12,9 @@ import {
 } from "three";
 
 const EARTH_TEXTURE =
-  "https://upload.wikimedia.org/wikipedia/commons/b/b3/Solarsystemscope_texture_8k_earth_nightmap.jpg";
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Solarsystemscope_texture_8k_earth_daymap.jpg";
 
-const RADIUS = 2.05;
+const RADIUS = 1.82;
 
 function pointOnGlobe(latitude: number, longitude: number, radius = RADIUS * 1.012) {
   const lat = (latitude * Math.PI) / 180;
