@@ -118,7 +118,7 @@ export default function About() {
             <div className="relative max-w-4xl mb-9">
               {/* Reserve the final text height so typing never pushes the layout. */}
               <p aria-hidden="true" className="invisible text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
-                {bioText}
+                {targetText}
               </p>
               <p className="absolute inset-0 bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
                 {displayedBio}
@@ -131,7 +131,13 @@ export default function About() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
+            {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4"
+            >
               {(profile.stats as ProfileStat[]).map((stat, i) => {
                 const Icon = STAT_ICONS[i % STAT_ICONS.length];
                 return (
@@ -146,10 +152,17 @@ export default function About() {
                   </div>
                 );
               })}
-            </div>
+            </motion.div>
+            )}
           </motion.div>
 
-          <div className="lg:col-span-2 relative pl-6">
+          {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.45 }}
+            className="lg:col-span-2 relative pl-6"
+          >
             <div className="absolute left-[7px] top-2 bottom-2 w-px bg-gradient-to-b from-neon-red via-neon-cyan to-transparent" />
             {(profile.timeline as TimelineItem[]).map((item, i) => (
               <motion.div
@@ -168,7 +181,8 @@ export default function About() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
+          )}
         </div>
       </div>
     </section>
