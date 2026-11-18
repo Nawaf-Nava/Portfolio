@@ -1,10 +1,12 @@
 "use client";
 
-import { Component, Suspense, useMemo, useRef, type ReactNode } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import {
   TextureLoader,
+  SRGBColorSpace,
   Vector3,
+  type Texture,
   CatmullRomCurve3,
   TubeGeometry,
   type Group,
@@ -12,7 +14,7 @@ import {
 } from "three";
 
 const EARTH_TEXTURE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Solarsystemscope_texture_2k_earth_daymap.jpg";
+  "https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg";
 
 const RADIUS = 1.82;
 
@@ -76,7 +78,33 @@ function DataArc({
 
 function RotatingEarth() {
   const globeRef = useRef<Group>(null);
-  const texture = useLoader(TextureLoader, EARTH_TEXTURE);
+  const [texture, setTexture] = useState<Texture | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const loader = new TextureLoader();
+    loader.setCrossOrigin("anonymous");
+    const loadedTexture = loader.load(
+      EARTH_TEXTURE,
+      (loaded) => {
+        if (cancelled) {
+          loaded.dispose();
+          return;
+        }
+        loaded.colorSpace = SRGBColorSpace;
+        setTexture(loaded);
+      },
+      undefined,
+      () => {
+        if (!cancelled) setTexture(null);
+      },
+    );
+
+    return () => {
+      cancelled = true;
+      loadedTexture.dispose();
+    };
+  }, []);
 
   useFrame((_, delta) => {
     if (globeRef.current) globeRef.current.rotation.y += Math.min(delta, 0.05) * 0.035;
@@ -86,7 +114,7 @@ function RotatingEarth() {
     <group ref={globeRef}>
       <mesh>
         <sphereGeometry args={[RADIUS, 72, 72]} />
-        <meshBasicMaterial map={texture} toneMapped={false} />
+        <meshBasicMaterial map={texture ?? undefined} color={texture ? "#ffffff" : "#0b4c82"} toneMapped={false} />
       </mesh>
 
       <mesh>
@@ -143,6 +171,7 @@ export default function EarthSphere() {
     <div className="absolute inset-0" aria-hidden="true">
       <EarthErrorBoundary>
         <Canvas
+          className="!absolute !inset-0 !h-full !w-full"
           camera={{ position: [0, 0, 6.2], fov: 38 }}
           dpr={1}
           gl={{
@@ -154,9 +183,7 @@ export default function EarthSphere() {
           }}
           fallback={null}
         >
-          <Suspense fallback={null}>
-            <RotatingEarth />
-          </Suspense>
+          <RotatingEarth />
         </Canvas>
       </EarthErrorBoundary>
     </div>
