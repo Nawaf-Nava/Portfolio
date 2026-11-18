@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo, useRef } from "react";
+import { Component, Suspense, useMemo, useRef, type ReactNode } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import {
   TextureLoader,
@@ -30,7 +30,6 @@ const NETWORK_LINKS = [
   [[38, -105], [48, -35], [51, 10]],
   [[35, 15], [18, 75], [28, 125]],
   [[-24, 135], [-5, 95], [18, 55]],
-  [[5, -75], [22, -35], [38, 10]],
 ] as const;
 
 function DataArc({
@@ -47,7 +46,7 @@ function DataArc({
     () => new CatmullRomCurve3(coordinates.map(([lat, lon]) => pointOnGlobe(lat, lon))),
     [coordinates],
   );
-  const geometry = useMemo(() => new TubeGeometry(curve, 72, 0.008, 6, false), [curve]);
+  const geometry = useMemo(() => new TubeGeometry(curve, 36, 0.007, 4, false), [curve]);
 
   useFrame(({ clock }) => {
     if (pulseRef.current) {
@@ -59,15 +58,15 @@ function DataArc({
   return (
     <group>
       <mesh geometry={geometry}>
-        <meshBasicMaterial color={color} transparent opacity={0.78} />
+        <meshBasicMaterial color={color} transparent opacity={0.72} />
       </mesh>
       <mesh ref={pulseRef}>
-        <sphereGeometry args={[0.027, 12, 12]} />
+        <sphereGeometry args={[0.022, 8, 8]} />
         <meshBasicMaterial color={color} toneMapped={false} />
       </mesh>
       {coordinates.map(([lat, lon], index) => (
         <mesh key={index} position={pointOnGlobe(lat, lon)}>
-          <sphereGeometry args={[0.018, 10, 10]} />
+          <sphereGeometry args={[0.014, 8, 8]} />
           <meshBasicMaterial color={color} toneMapped={false} />
         </mesh>
       ))}
@@ -80,61 +79,86 @@ function RotatingEarth() {
   const texture = useLoader(TextureLoader, EARTH_TEXTURE);
 
   useFrame((_, delta) => {
-    if (globeRef.current) globeRef.current.rotation.y += delta * 0.045;
+    if (globeRef.current) globeRef.current.rotation.y += Math.min(delta, 0.05) * 0.035;
   });
 
   return (
     <group ref={globeRef}>
-      {/* Daylight Earth surface */}
       <mesh>
-        <sphereGeometry args={[RADIUS, 160, 160]} />
+        <sphereGeometry args={[RADIUS, 72, 72]} />
         <meshBasicMaterial map={texture} toneMapped={false} />
       </mesh>
 
-      {/* Fine cyan geographic grid */}
       <mesh>
-        <sphereGeometry args={[RADIUS * 1.006, 40, 28]} />
+        <sphereGeometry args={[RADIUS * 1.006, 24, 16]} />
         <meshBasicMaterial
           color="#45cfff"
           wireframe
           transparent
-          opacity={0.075}
+          opacity={0.065}
           depthWrite={false}
         />
       </mesh>
 
-      {/* Thin atmospheric rim */}
       <mesh>
-        <sphereGeometry args={[RADIUS * 1.025, 96, 96]} />
+        <sphereGeometry args={[RADIUS * 1.022, 48, 48]} />
         <meshBasicMaterial
           color="#168dff"
           wireframe
           transparent
-          opacity={0.055}
+          opacity={0.045}
           depthWrite={false}
         />
       </mesh>
 
       <DataArc coordinates={NETWORK_LINKS[0]} color="#278dff" phase={0} />
-      <DataArc coordinates={NETWORK_LINKS[1]} color="#ff3b4f" phase={0.28} />
-      <DataArc coordinates={NETWORK_LINKS[2]} color="#278dff" phase={0.56} />
-      <DataArc coordinates={NETWORK_LINKS[3]} color="#ff3b4f" phase={0.78} />
+      <DataArc coordinates={NETWORK_LINKS[1]} color="#ff3b4f" phase={0.34} />
+      <DataArc coordinates={NETWORK_LINKS[2]} color="#278dff" phase={0.68} />
     </group>
   );
 }
 
+class EarthErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch() {
+    // Keep a graphics failure isolated from the rest of the portfolio.
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
+}
+
 export default function EarthSphere() {
   return (
-    <div className="absolute inset-0">
-      <Canvas
-        camera={{ position: [0, 0, 6.2], fov: 38 }}
-        dpr={[1, 1.25]}
-        gl={{ alpha: true, antialias: true }}
-      >
-        <Suspense fallback={null}>
-          <RotatingEarth />
-        </Suspense>
-      </Canvas>
+    <div className="absolute inset-0" aria-hidden="true">
+      <EarthErrorBoundary>
+        <Canvas
+          camera={{ position: [0, 0, 6.2], fov: 38 }}
+          dpr={1}
+          gl={{
+            alpha: true,
+            antialias: false,
+            powerPreference: "low-power",
+            stencil: false,
+            depth: true,
+          }}
+          fallback={null}
+        >
+          <Suspense fallback={null}>
+            <RotatingEarth />
+          </Suspense>
+        </Canvas>
+      </EarthErrorBoundary>
     </div>
   );
 }
