@@ -22,12 +22,6 @@ const item: Variants = {
 export default function Hero() {
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 -z-20 grid-bg-red" />
-      <div className="absolute top-1/3 right-[8%] -z-20 w-[520px] h-[520px] max-w-[70vw] rounded-full hero-glow-red opacity-60" />
-      <div className="absolute -left-40 top-1/2 -z-20 w-[420px] h-[420px] rounded-full bg-neon-red/5 blur-[130px]" />
-      <div className="absolute inset-0 -z-10 hero-vignette" />
-
       <div className="mx-auto max-w-7xl w-full px-5 md:px-8 pt-28 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
         {/* Left column */}
         <motion.div variants={container} initial="hidden" animate="show" className="order-2 lg:order-1">
