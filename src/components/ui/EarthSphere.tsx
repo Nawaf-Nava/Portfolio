@@ -12,7 +12,7 @@ import {
 } from "three";
 
 const EARTH_TEXTURE =
-  "https://commons.wikimedia.org/wiki/Special:FilePath/Solarsystemscope_texture_8k_earth_daymap.jpg";
+  "https://commons.wikimedia.org/wiki/Special:FilePath/Solarsystemscope_texture_2k_earth_daymap.jpg";
 
 const RADIUS = 1.82;
 
@@ -128,7 +128,7 @@ export default function EarthSphere() {
     <div className="absolute inset-0">
       <Canvas
         camera={{ position: [0, 0, 6.2], fov: 38 }}
-        dpr={[1, 1.5]}
+        dpr={[1, 1.25]}
         gl={{ alpha: true, antialias: true }}
       >
         <Suspense fallback={null}>
