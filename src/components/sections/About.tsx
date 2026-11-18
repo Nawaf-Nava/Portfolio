@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Award, FileBadge, Timer, MonitorPlay } from "lucide-react";
-import SectionHeading from "@/components/ui/SectionHeading";
 import Counter from "@/components/ui/Counter";
 import profile from "@/data/profile.json";
 
@@ -85,7 +84,28 @@ export default function About() {
   return (
     <section ref={sectionRef} id="about" className="relative py-24 px-5 md:px-8">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Who Am I" title="About Me" />
+        <div className="mb-10">
+          <p className="font-hack text-xs tracking-[0.3em] text-white/50 uppercase mb-2">
+            {"// "}Who Am I
+          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <h2 className="font-display text-3xl md:text-4xl font-bold tracking-wide neon-text-cyan">
+              About Me
+            </h2>
+            {showReadMore && (
+              <button
+                type="button"
+                onClick={handleReadMore}
+                disabled={isExpanded}
+                aria-live="polite"
+                className="inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors disabled:opacity-80 disabled:cursor-default"
+              >
+                {isExpanded ? (displayedBio.length < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
+              </button>
+            )}
+          </div>
+          <div className="mt-4 h-px w-24 bg-gradient-to-r from-neon-red to-neon-cyan" />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
           <motion.div
@@ -127,17 +147,6 @@ export default function About() {
                 );
               })}
             </div>
-            {showReadMore && (
-              <button
-                type="button"
-                onClick={handleReadMore}
-                disabled={isExpanded}
-                aria-live="polite"
-                className="mt-6 inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors disabled:opacity-80 disabled:cursor-default"
-              >
-                {isExpanded ? (displayedBio.length < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
-              </button>
-            )}
           </motion.div>
 
           <div className="lg:col-span-2 relative pl-6">
