@@ -1,24 +1,27 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { PlayCircle, Eye, MonitorPlay } from "lucide-react";
-import Modal from "@/components/ui/Modal";
 import Marquee from "@/components/ui/Marquee";
 import type { VideoItem } from "@/lib/youtube";
 
 export default function VideoGallery({ videos }: { videos: VideoItem[] }) {
-  const [active, setActive] = useState<VideoItem | null>(null);
-  const pending = (video: VideoItem) => video.id.startsWith("pending-");
+  const playableVideos = videos.filter((video) => !video.id.startsWith("pending-"));
 
   return (
-    <>
-      <Marquee speed={45} edgeColor="#0a0d10">
-        {videos.map((video) => (
-          <button
+    <Marquee speed={45} edgeColor="#0a0d10">
+      {playableVideos.map((video) => {
+        const videoUrl = video.playlistId
+          ? `https://www.youtube.com/playlist?list=${encodeURIComponent(video.playlistId)}`
+          : `https://www.youtube.com/watch?v=${encodeURIComponent(video.id)}`;
+
+        return (
+          <a
             key={video.id}
-            type="button"
-            onClick={() => setActive(video)}
+            href={videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Watch ${video.title} on YouTube`}
             className="cyber-card w-[340px] shrink-0 overflow-hidden group text-left"
           >
             <div className="relative w-full aspect-video bg-white/5 overflow-hidden">
@@ -54,41 +57,9 @@ export default function VideoGallery({ videos }: { videos: VideoItem[] }) {
                 {video.date}
               </p>
             </div>
-          </button>
-        ))}
-      </Marquee>
-
-      <Modal open={!!active} onClose={() => setActive(null)} panelClassName="max-w-3xl">
-        {active && (
-          <div>
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
-              {pending(active) ? (
-                <div className="absolute inset-0 flex items-center justify-center font-hack text-sm text-white/40 uppercase tracking-wider">
-                  Link coming soon
-                </div>
-              ) : (
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src={
-                    active.playlistId
-                      ? `https://www.youtube-nocookie.com/embed/videoseries?list=${active.playlistId}&autoplay=1&rel=0`
-                      : `https://www.youtube-nocookie.com/embed/${active.id}?autoplay=1&rel=0`
-                  }
-                  title={active.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              )}
-            </div>
-            <h3 className="font-display font-semibold text-base mt-4 pr-6">{active.title}</h3>
-            <p className="flex items-center gap-1.5 text-white/50 text-xs font-hack mt-1">
-              <Eye size={12} />
-              {active.views && <>{active.views} views &middot; </>}
-              {active.date}
-            </p>
-          </div>
-        )}
-      </Modal>
-    </>
+          </a>
+        );
+      })}
+    </Marquee>
   );
 }
