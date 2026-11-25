@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
@@ -13,7 +14,7 @@ const item: Variants = {
 };
 
 
-function TypedText({ text, className = "" }: { text: string; className?: string }) {
+function TypedText({ text, className = "", active }: { text: string; className?: string; active: boolean }) {
   const characters = Array.from(text);
 
   return (
@@ -21,7 +22,7 @@ function TypedText({ text, className = "" }: { text: string; className?: string 
       aria-label={text}
       className={className}
       initial="hidden"
-      whileInView="show"
+      whileInView={active ? "show" : undefined}
       viewport={{ once: true, amount: 0.01 }}
       variants={{
         hidden: {},
@@ -52,26 +53,35 @@ function TypedText({ text, className = "" }: { text: string; className?: string 
 }
 
 export default function Hero() {
+  const [introComplete, setIntroComplete] = useState(false);
+
+  useEffect(() => {
+    const activate = () => setIntroComplete(true);
+    if (document.documentElement.dataset.navaReady === "true") activate();
+    window.addEventListener("nava:loader-complete", activate);
+    return () => window.removeEventListener("nava:loader-complete", activate);
+  }, []);
+
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="mx-auto max-w-7xl w-full px-5 md:px-8 pt-28 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
         {/* Left column */}
         <div className="order-2 lg:order-1">
           <p className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide">
-            <TypedText text="< Student Developer />" />
+            <TypedText text="< Student Developer />" active={introComplete} />
           </p>
 
           <h1 className="font-display font-black leading-[0.95] mb-5">
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
-              <TypedText text="NAWAF" />
+              <TypedText text="NAWAF" active={introComplete} />
             </span>
             <span className="block neon-text-red text-[2rem] md:text-5xl xl:text-6xl mt-2 tracking-wide">
-              <TypedText text="AI & SOFTWARE PROJECTS" />
+              <TypedText text="AI & SOFTWARE PROJECTS" active={introComplete} />
             </span>
           </h1>
 
           <p className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl">
-            <TypedText text="Software Development | AI Projects | Web Applications" />
+            <TypedText text="Software Development | AI Projects | Web Applications" active={introComplete} />
           </p>
 
           {/* Animated typing list */}
@@ -84,12 +94,12 @@ export default function Hero() {
                   show: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: "easeOut" } },
                 }}
                 initial="hidden"
-                whileInView="show"
+                whileInView={introComplete ? "show" : undefined}
                 viewport={{ once: true, amount: 0.01 }}
                 className="flex items-center gap-2 text-white/80"
               >
                 <span className="text-neon-red">{">"}</span>
-                <TypedText text={title} />
+                <TypedText text={title} active={introComplete} />
               </motion.li>
             ))}
           </motion.ul>
