@@ -147,7 +147,7 @@ export default function Hero() {
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="relative z-10 mx-auto w-full max-w-[540px]"
+            className="relative z-10 mx-auto -mx-5 w-[calc(100%+2.5rem)] max-w-none lg:mx-auto lg:w-full lg:max-w-[590px]"
           >
             <Image
               src="/images/hacker-cutout-hd.png"
@@ -157,7 +157,7 @@ export default function Hero() {
               quality={95}
               priority
               sizes="(min-width: 1024px) 560px, 90vw"
-              className="relative w-full h-auto select-none pointer-events-none"
+              className="relative w-full h-auto select-none pointer-events-none drop-shadow-[0_24px_30px_rgba(0,0,0,0.9)]"
             />
           </motion.div>
 
