@@ -7,14 +7,6 @@ import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
 
-const container: Variants = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.09, delayChildren: 0.1 },
-  },
-};
-
-
 const item: Variants = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
@@ -25,9 +17,12 @@ export default function Hero() {
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="mx-auto max-w-7xl w-full px-5 md:px-8 pt-28 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
         {/* Left column */}
-        <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.22 }} className="order-2 lg:order-1">
+        <div className="order-2 lg:order-1">
           <motion.p
             variants={item}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.35 }}
             className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide"
           >
             {"< "}Student Developer{" />"}
@@ -35,6 +30,9 @@ export default function Hero() {
 
           <motion.h1
             variants={item}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
             className="font-display font-black leading-[0.95] mb-5"
           >
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
@@ -47,6 +45,9 @@ export default function Hero() {
 
           <motion.p
             variants={item}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.35 }}
             className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl"
           >
             Software Development <span className="text-neon-red">|</span> AI Projects{" "}
@@ -54,14 +55,17 @@ export default function Hero() {
           </motion.p>
 
           {/* Animated typing list */}
-          <motion.ul variants={item} className="font-hack text-sm md:text-base space-y-2 mb-9">
+          <motion.ul className="font-hack text-sm md:text-base space-y-2 mb-9">
             {profile.titles.map((title, i) => (
               <motion.li
                 key={title}
                 variants={{
                   hidden: { opacity: 0, x: -22, filter: "blur(5px)" },
-                  show: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.55, delay: i * 0.12, ease: "easeOut" } },
+                  show: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: "easeOut" } },
                 }}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true, amount: 0.45 }}
                 className="flex items-center gap-2 text-white/80"
               >
                 <span className="text-neon-red">{">"}</span>
@@ -71,8 +75,12 @@ export default function Hero() {
           </motion.ul>
 
           {/* Buttons */}
-          <motion.div variants={item} className="flex flex-wrap gap-4 mb-9">
+          <div className="flex flex-wrap gap-4 mb-9">
             <motion.a
+              variants={item}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.4 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href="#projects"
@@ -81,6 +89,10 @@ export default function Hero() {
               <Eye size={17} /> View Portfolio
             </motion.a>
             <motion.a
+              variants={item}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.4 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href={socials.find((s) => s.name === "YouTube")?.url ?? "#videos"}
@@ -91,6 +103,10 @@ export default function Hero() {
               <PlayCircle size={17} /> Watch YouTube
             </motion.a>
             <motion.a
+              variants={item}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.4 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href={`mailto:${profile.email}`}
@@ -101,7 +117,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Socials */}
-          <motion.div variants={item} className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
             {socials.map((s) => {
               const Icon = SOCIAL_ICONS[s.icon] ?? SOCIAL_ICONS.Github;
               if (!s.url) {
@@ -121,7 +137,7 @@ export default function Hero() {
                   key={s.name}
                   initial={{ opacity: 0, y: 12, scale: 0.9 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, amount: 0.5 }}
                   whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
                   transition={{ duration: 0.35 }}
                   href={s.url}
@@ -135,8 +151,8 @@ export default function Hero() {
                 </motion.a>
               );
             })}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Right column — cinematic hacker artwork */}
         <motion.div
@@ -162,7 +178,8 @@ export default function Hero() {
 
 
           <motion.div
-            animate={{ y: [0, -8, 0] }}
+            whileInView={{ y: [0, -8, 0] }}
+            viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="relative left-1/2 z-10 w-screen max-w-none -translate-x-1/2 lg:left-auto lg:mx-auto lg:w-full lg:max-w-[590px] lg:translate-x-0"
           >
