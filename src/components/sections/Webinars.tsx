@@ -15,7 +15,7 @@ export default function Webinars() {
   const pending = (w: Webinar) => w.id.startsWith("pending-");
 
   return (
-    <section id="webinars" className="relative py-24 px-5 md:px-8 bg-[#0a0d10]">
+    <section id="webinars" className="relative py-24 px-5 md:px-8 bg-transparent">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Talks & Workshops" title="Webinar Certificates" />
 
