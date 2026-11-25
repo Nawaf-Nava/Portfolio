@@ -10,6 +10,19 @@ import socials from "@/data/socials.json";
 
 const REVEAL_LINE = 0.88;
 
+function escapeHtml(value: string) {
+  return value.replace(/[&<>"']/g, (character) => {
+    const entities: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return entities[character];
+  });
+}
+
 function useReveal(ref: { current: HTMLElement | null }, active: boolean) {
   const [revealed, setRevealed] = useState(false);
 
@@ -61,8 +74,8 @@ function TypedText({ text, className = "", active }: { text: string; className?:
         : { opacity: 0, y: 8, filter: "blur(4px)" }}
       transition={{ duration: 0.42, ease: "easeOut" }}
     >
-      {text}
-    </motion.span>
+      dangerouslySetInnerHTML={{ __html: escapeHtml(text) }}
+    />
   );
 }
 
