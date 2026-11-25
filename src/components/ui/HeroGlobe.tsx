@@ -20,6 +20,7 @@ function createRng(seed: number) {
 function ParticleGlobe() {
   const pointsRef = useRef<THREE.Points>(null);
   const linesRef = useRef<THREE.LineSegments>(null);
+  const sphereRef = useRef<THREE.Mesh>(null);
 
   const particleGeometry = useMemo(() => {
     const rng = createRng(42);
@@ -66,6 +67,7 @@ function ParticleGlobe() {
   useFrame((_, delta) => {
     if (pointsRef.current) pointsRef.current.rotation.y += delta * 0.08;
     if (linesRef.current) linesRef.current.rotation.y += delta * 0.08;
+    if (sphereRef.current) sphereRef.current.rotation.y += delta * 0.08;
   });
 
   return (
@@ -76,7 +78,7 @@ function ParticleGlobe() {
       <lineSegments ref={linesRef} geometry={lineGeometry}>
         <lineBasicMaterial color="#ff003c" transparent opacity={0.25} />
       </lineSegments>
-      <mesh>
+      <mesh ref={sphereRef}>
         <sphereGeometry args={[2.15, 32, 32]} />
         <meshBasicMaterial color="#00e5ff" wireframe transparent opacity={0.06} />
       </mesh>
