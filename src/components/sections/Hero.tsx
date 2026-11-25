@@ -8,7 +8,7 @@ import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
 
-const REVEAL_LINE = 0.42;
+const REVEAL_LINE = 0.88;
 
 function useReveal(ref: { current: HTMLElement | null }, active: boolean) {
   const [revealed, setRevealed] = useState(false);
@@ -148,7 +148,7 @@ function SocialLinks({ active }: { active: boolean }) {
       className="flex items-center gap-3"
       initial="hidden"
       animate={active && isInView ? "show" : "hidden"}
-      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.14, delayChildren: 0.08 } } }}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08, delayChildren: 0.02 } } }}
     >
       {socials.map((social) => {
         const Icon = SOCIAL_ICONS[social.icon] ?? SOCIAL_ICONS.Github;
