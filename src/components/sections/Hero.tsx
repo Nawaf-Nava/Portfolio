@@ -2,17 +2,54 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
 
-const CENTER_TRIGGER_MARGIN = "-45% 0px -45% 0px";
+const REVEAL_LINE = 0.42;
+
+function useReveal(ref: { current: HTMLElement | null }, active: boolean) {
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    if (!active || revealed) return;
+
+    let firstCheck = true;
+    const checkPosition = () => {
+      const element = ref.current;
+      if (!element) return;
+
+      const rect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const triggerY = viewportHeight * REVEAL_LINE;
+
+      // On the first check, anything already visible gets its entrance immediately.
+      // After that, elements below the fold wait until their top reaches 42% of the viewport.
+      const alreadyVisible = firstCheck && rect.top < viewportHeight && rect.bottom > 0;
+      firstCheck = false;
+
+      if (alreadyVisible || rect.top <= triggerY) {
+        setRevealed(true);
+      }
+    };
+
+    checkPosition();
+    window.addEventListener("scroll", checkPosition, { passive: true });
+    window.addEventListener("resize", checkPosition);
+    return () => {
+      window.removeEventListener("scroll", checkPosition);
+      window.removeEventListener("resize", checkPosition);
+    };
+  }, [active, revealed, ref]);
+
+  return revealed;
+}
 
 function TypedText({ text, className = "", active }: { text: string; className?: string; active: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN });
+  const isInView = useReveal(ref, active);
   const characters = Array.from(text);
 
   return (
@@ -43,7 +80,7 @@ function TypedText({ text, className = "", active }: { text: string; className?:
 
 function TitleItem({ title, active }: { title: string; active: boolean }) {
   const ref = useRef<HTMLLIElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.08, margin: CENTER_TRIGGER_MARGIN });
+  const isInView = useReveal(ref, active);
 
   return (
     <motion.li
@@ -79,7 +116,7 @@ function RevealLink({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.12, margin: CENTER_TRIGGER_MARGIN });
+  const isInView = useReveal(ref, active);
 
   return (
     <motion.a
@@ -103,7 +140,7 @@ function RevealLink({
 
 function SocialLinks({ active }: { active: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.15, margin: CENTER_TRIGGER_MARGIN });
+  const isInView = useReveal(ref, active);
 
   return (
     <motion.div
@@ -156,6 +193,10 @@ function SocialLinks({ active }: { active: boolean }) {
 
 export default function Hero() {
   const [introComplete, setIntroComplete] = useState(false);
+  const artworkRef = useRef<HTMLDivElement>(null);
+  const artworkVisible = useReveal(artworkRef, introComplete);
+  const scrollCueRef = useRef<HTMLAnchorElement>(null);
+  const scrollCueVisible = useReveal(scrollCueRef, introComplete);
 
   useEffect(() => {
     const activate = () => setIntroComplete(true);
@@ -231,14 +272,19 @@ export default function Hero() {
         </div>
 
         {/* Right column — cinematic hacker artwork */}
-        <motion.div
-          initial={{ opacity: 0, x: 42, scale: 0.94, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
-          transition={{ duration: 1.05, ease: "easeOut" }}
+        <div
+          ref={artworkRef}
           className="order-1 lg:order-2 relative"
         >
-          <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.08, rotate: -16, filter: "blur(12px)" }}
+            animate={artworkVisible
+              ? { opacity: 0.9, scale: 1, rotate: 0, filter: "blur(0px)" }
+              : { opacity: 0, scale: 0.08, rotate: -16, filter: "blur(12px)" }}
+            transition={{ type: "spring", stiffness: 150, damping: 17, mass: 0.72 }}
+            className="absolute inset-0 z-0 pointer-events-none"
+            aria-hidden="true"
+          >
             <Image
               src="/images/earth-photo.png"
               alt=""
@@ -247,24 +293,29 @@ export default function Hero() {
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-contain opacity-90 scale-[1.42]"
             />
-          </div>
+          </motion.div>
 
           {/* Volumetric red glow behind the figure */}
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={artworkVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.7 }}
+            transition={{ duration: 0.85, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red rounded-full"
           />
 
 
           <motion.div
-            whileInView={{ y: [0, -8, 0] }}
-            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            initial={{ opacity: 0, y: 34, scale: 0.68, filter: "blur(12px)" }}
+            animate={artworkVisible
+              ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+              : { opacity: 0, y: 34, scale: 0.68, filter: "blur(12px)" }}
+            transition={{ type: "spring", stiffness: 125, damping: 16, mass: 0.82, delay: 0.08 }}
             className="relative left-1/2 z-10 w-screen max-w-none -translate-x-1/2 lg:left-auto lg:mx-auto lg:w-full lg:max-w-[590px] lg:translate-x-0"
           >
+            <motion.div
+              animate={artworkVisible ? { y: [0, -8, 0] } : { y: 0 }}
+              transition={{ duration: 8, repeat: artworkVisible ? Infinity : 0, ease: "easeInOut" }}
+            >
             <Image
               src="/images/hacker-cutout-hd.png"
               alt="Nawaf portfolio artwork"
@@ -275,13 +326,13 @@ export default function Hero() {
               sizes="(min-width: 1024px) 560px, 90vw"
               className="relative block w-full h-auto select-none pointer-events-none drop-shadow-[0_18px_28px_rgba(0,0,0,0.85)] [mask-image:linear-gradient(to_bottom,#000_0%,#000_97%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,#000_0%,#000_97%,transparent_100%)]"
             />
+            </motion.div>
           </motion.div>
 
           {/* HUD annotations floating around the globe */}
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
+            animate={artworkVisible ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
             transition={{ delay: 0.45, duration: 0.8 }}
             className="pointer-events-none absolute inset-0 z-20 hidden sm:block font-hack select-none"
           >
@@ -309,10 +360,10 @@ export default function Hero() {
 
       {/* Scroll cue */}
       <motion.a
+        ref={scrollCueRef}
         href="#about"
         initial={{ opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: CENTER_TRIGGER_MARGIN }}
+        animate={scrollCueVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
         transition={{ delay: 0.8, duration: 0.7 }}
         className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-white/40 hover:text-neon-cyan transition-colors"
       >
@@ -320,10 +371,8 @@ export default function Hero() {
         <span className="w-5 h-8 rounded-full border border-white/25 flex justify-center pt-1.5">
           <motion.span
             className="w-1 h-1.5 rounded-full bg-neon-cyan"
-            initial={{ y: 0, opacity: 1 }}
-            whileInView={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
-            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
-            transition={{ duration: 1.6, repeat: Infinity }}
+            animate={scrollCueVisible ? { y: [0, 8, 0], opacity: [1, 0.2, 1] } : { y: 0, opacity: 1 }}
+            transition={{ duration: 1.6, repeat: scrollCueVisible ? Infinity : 0 }}
           />
         </span>
       </motion.a>
