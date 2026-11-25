@@ -16,7 +16,8 @@ export default function About() {
   const typingIndexRef = useRef(0);
   const [hasStarted, setHasStarted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [displayedBio, setDisplayedBio] = useState("");
+  const typedTextRef = useRef<HTMLSpanElement>(null);
+  const [typedLength, setTypedLength] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
 
   const bioText = profile.bio;
@@ -24,8 +25,8 @@ export default function About() {
   const introEnd = sentenceEnd >= 0 ? sentenceEnd + 1 : Math.min(bioText.length, 120);
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
-  const canReadMore = hasStarted && !isExpanded && !isTyping && displayedBio.length === introText.length;
-  const showReadMore = hasStarted && displayedBio.length >= introText.length;
+  const canReadMore = hasStarted && !isExpanded && !isTyping && typedLength === introText.length;
+  const showReadMore = hasStarted && typedLength >= introText.length;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -53,8 +54,8 @@ export default function About() {
   useEffect(() => {
     if (!hasStarted) return;
 
-    // Resume from the exact number of characters already displayed.
-    typingIndexRef.current = displayedBio.length;
+    // Keep animated text outside React reconciliation for browser-translation compatibility.
+    typingIndexRef.current = Math.max(typingIndexRef.current, typedLength);
     if (typingIndexRef.current >= targetText.length) {
       setIsTyping(false);
       return;
@@ -64,20 +65,20 @@ export default function About() {
     const interval = window.setInterval(() => {
       const nextIndex = Math.min(typingIndexRef.current + 1, targetText.length);
       typingIndexRef.current = nextIndex;
-      setDisplayedBio(targetText.slice(0, nextIndex));
+      if (typedTextRef.current) typedTextRef.current.textContent = targetText.slice(0, nextIndex);
 
       if (nextIndex >= targetText.length) {
         window.clearInterval(interval);
+        setTypedLength(nextIndex);
         setIsTyping(false);
       }
     }, 28);
 
     return () => window.clearInterval(interval);
-  }, [hasStarted, isExpanded, targetText]);
+  }, [hasStarted, isExpanded, targetText, typedLength]);
 
   const handleReadMore = () => {
     if (!canReadMore) return;
-    typingIndexRef.current = displayedBio.length;
     setIsExpanded(true);
   };
 
@@ -100,7 +101,7 @@ export default function About() {
                 aria-live="polite"
                 className="inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors disabled:opacity-80 disabled:cursor-default"
               >
-                {isExpanded ? (displayedBio.length < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
+                {isExpanded ? (typedLength < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
               </button>
             )}
           </div>
@@ -121,7 +122,7 @@ export default function About() {
                 {targetText}
               </p>
               <p className="absolute inset-0 bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
-                {displayedBio}
+                <span ref={typedTextRef} />
                 {isTyping && (
                   <span
                     aria-hidden="true"
