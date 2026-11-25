@@ -87,7 +87,7 @@ function ParticleGlobe() {
 export default function HeroGlobe() {
   return (
     <div className="absolute inset-0">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }} gl={{ alpha: true, antialias: true }}>
+      <Canvas camera={{ position: [0, 0, 4.8], fov: 45 }} gl={{ alpha: true, antialias: true }}>
         <ParticleGlobe />
       </Canvas>
     </div>
