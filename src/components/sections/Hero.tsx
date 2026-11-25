@@ -140,7 +140,7 @@ export default function Hero() {
               fill
               priority
               sizes="(min-width: 1024px) 50vw, 100vw"
-              className="object-contain opacity-90 scale-[1.32]"
+              className="object-contain opacity-90 scale-[1.42]"
             />
           </div>
 
