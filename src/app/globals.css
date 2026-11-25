@@ -25,6 +25,11 @@
 
 html {
   scroll-behavior: smooth;
+  direction: ltr;
+}
+
+body {
+  direction: ltr;
 }
 
 section[id] {
