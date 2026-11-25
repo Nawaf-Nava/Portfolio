@@ -25,7 +25,7 @@ export default function Hero() {
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="mx-auto max-w-7xl w-full px-5 md:px-8 pt-28 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
         {/* Left column */}
-        <motion.div variants={container} initial="hidden" animate="show" className="order-2 lg:order-1">
+        <motion.div variants={container} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.22 }} className="order-2 lg:order-1">
           <motion.p
             variants={item}
             className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide"
@@ -58,9 +58,10 @@ export default function Hero() {
             {profile.titles.map((title, i) => (
               <motion.li
                 key={title}
-                initial={{ opacity: 0, x: -14 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.5 + i * 0.15 }}
+                variants={{
+                  hidden: { opacity: 0, x: -22, filter: "blur(5px)" },
+                  show: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.55, delay: i * 0.12, ease: "easeOut" } },
+                }}
                 className="flex items-center gap-2 text-white/80"
               >
                 <span className="text-neon-red">{">"}</span>
@@ -71,26 +72,32 @@ export default function Hero() {
 
           {/* Buttons */}
           <motion.div variants={item} className="flex flex-wrap gap-4 mb-9">
-            <a
+            <motion.a
+              whileHover={{ y: -4, scale: 1.025 }}
+              whileTap={{ scale: 0.98 }}
               href="#projects"
               className="glow-btn group flex items-center gap-2 px-6 py-3.5 rounded-lg bg-neon-red/90 text-white font-hack text-sm uppercase tracking-wider shadow-[0_0_24px_rgba(255,0,60,0.45)] hover:shadow-[0_0_36px_rgba(255,0,60,0.75)] transition-all"
             >
               <Eye size={17} /> View Portfolio
-            </a>
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ y: -4, scale: 1.025 }}
+              whileTap={{ scale: 0.98 }}
               href={socials.find((s) => s.name === "YouTube")?.url ?? "#videos"}
               target="_blank"
               rel="noopener noreferrer"
               className="glow-btn flex items-center gap-2 px-6 py-3.5 rounded-lg neon-border-cyan text-neon-cyan font-hack text-sm uppercase tracking-wider hover:bg-neon-cyan/10 transition-colors"
             >
               <PlayCircle size={17} /> Watch YouTube
-            </a>
-            <a
+            </motion.a>
+            <motion.a
+              whileHover={{ y: -4, scale: 1.025 }}
+              whileTap={{ scale: 0.98 }}
               href={`mailto:${profile.email}`}
               className="glow-btn flex items-center gap-2 px-6 py-3.5 rounded-lg border border-white/20 text-white/90 font-hack text-sm uppercase tracking-wider hover:border-neon-red hover:text-neon-red transition-colors"
             >
               <Mail size={17} /> Contact Me
-            </a>
+            </motion.a>
           </motion.div>
 
           {/* Socials */}
@@ -110,8 +117,13 @@ export default function Hero() {
                 );
               }
               return (
-                <a
+                <motion.a
                   key={s.name}
+                  initial={{ opacity: 0, y: 12, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
+                  transition={{ duration: 0.35 }}
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -120,7 +132,7 @@ export default function Hero() {
                   className="w-11 h-11 flex items-center justify-center rounded-lg glass cursor-pointer hover:neon-border-red hover:text-neon-red hover:scale-110 transition-all"
                 >
                   <Icon size={18} />
-                </a>
+                </motion.a>
               );
             })}
           </motion.div>
@@ -128,9 +140,10 @@ export default function Hero() {
 
         {/* Right column — cinematic hacker artwork */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.1, ease: "easeOut" }}
+          initial={{ opacity: 0, x: 42, scale: 0.94, filter: "blur(8px)" }}
+          whileInView={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 1.05, ease: "easeOut" }}
           className="order-1 lg:order-2 relative"
         >
           <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
@@ -167,9 +180,10 @@ export default function Hero() {
 
           {/* HUD annotations floating around the globe */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9, duration: 0.8 }}
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ delay: 0.45, duration: 0.8 }}
             className="pointer-events-none absolute inset-0 z-20 hidden sm:block font-hack select-none"
           >
             <span className="absolute top-[3%] right-[2%] text-[11px] tracking-[0.25em] text-neon-cyan/70">
@@ -197,9 +211,10 @@ export default function Hero() {
       {/* Scroll cue */}
       <motion.a
         href="#about"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.4 }}
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.8, duration: 0.7 }}
         className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-white/40 hover:text-neon-cyan transition-colors"
       >
         <span className="font-hack text-[10px] uppercase tracking-[0.3em]">Scroll</span>
