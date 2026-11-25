@@ -355,7 +355,7 @@ export default function Hero() {
               #ATTACK_VECTOR
             </span>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Scroll cue */}
