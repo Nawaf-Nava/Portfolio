@@ -30,7 +30,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="relative border-t border-white/10 bg-[#070707] pt-16 pb-8 px-5 md:px-8">
+    <footer className="relative border-t border-white/10 bg-[#070707]/55 backdrop-blur-[2px] pt-16 pb-8 px-5 md:px-8">
       <div className="mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
         <div>
           <div className="flex items-center gap-2 font-display font-bold text-lg mb-3">
