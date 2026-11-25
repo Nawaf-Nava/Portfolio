@@ -74,7 +74,10 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center gap-3">
           <a
-            href={profile.resumeUrl}
+            href={profile.resumeUrl || "/resume.pdf"}
+            target="_blank"
+            rel="noopener noreferrer"
+            translate="no"
             className="px-4 py-2 rounded-md border border-neon-cyan/60 text-neon-cyan text-xs font-hack uppercase tracking-wider hover:bg-neon-cyan/10 transition-colors"
           >
             Resume
@@ -104,7 +107,7 @@ export default function Navbar() {
             </a>
           ))}
           <div className="flex gap-3 pt-2">
-            <a href={profile.resumeUrl} className="flex-1 text-center px-4 py-2 rounded-md border border-neon-cyan/60 text-neon-cyan text-xs">
+            <a href={profile.resumeUrl || "/resume.pdf"} target="_blank" rel="noopener noreferrer" translate="no" className="flex-1 text-center px-4 py-2 rounded-md border border-neon-cyan/60 text-neon-cyan text-xs">
               Resume
             </a>
             <a href={`mailto:${profile.email}`} onClick={() => setOpen(false)} className="flex-1 text-center px-4 py-2 rounded-md bg-neon-red text-white text-xs">
