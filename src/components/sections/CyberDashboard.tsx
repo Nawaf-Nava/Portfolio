@@ -54,7 +54,7 @@ function Label({ icon: Icon, text }: { icon: typeof Activity; text: string }) {
 
 export default function CyberDashboard() {
   return (
-    <section className="relative py-24 px-5 md:px-8 bg-[#080a0d]">
+    <section className="relative py-24 px-5 md:px-8 bg-transparent">
       <div className="mx-auto max-w-7xl">
         <SectionHeading eyebrow="Live Operations" title="Cyber Command Center" />
 
