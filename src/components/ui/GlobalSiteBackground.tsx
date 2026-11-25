@@ -10,7 +10,7 @@ export default function GlobalSiteBackground() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      className="pointer-events-none fixed inset-x-0 top-0 z-0 h-[100svh] overflow-hidden"
     >
       <div className="absolute inset-0 bg-[#060607]" />
       <div className="absolute inset-0 grid-bg-red opacity-90" />
