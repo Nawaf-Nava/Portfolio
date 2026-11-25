@@ -13,20 +13,17 @@ type TimelineItem = { year: string; title: string; description: string };
 
 export default function About() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const typingIndexRef = useRef(0);
   const [hasStarted, setHasStarted] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const typedTextRef = useRef<HTMLSpanElement>(null);
-  const [typedLength, setTypedLength] = useState(0);
-  const [isTyping, setIsTyping] = useState(false);
+  const [typingComplete, setTypingComplete] = useState(false);
 
   const bioText = profile.bio;
-  const sentenceEnd = bioText.search(/[.!?](?:\s|$)/);
+  const sentenceEnd = bioText.search(/[.!?](?:\\s|$)/);
   const introEnd = sentenceEnd >= 0 ? sentenceEnd + 1 : Math.min(bioText.length, 120);
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
-  const canReadMore = hasStarted && !isExpanded && !isTyping && typedLength === introText.length;
-  const showReadMore = hasStarted && typedLength >= introText.length;
+  const canReadMore = hasStarted && !isExpanded && typingComplete;
+  const showReadMore = hasStarted && (!isExpanded || typingComplete);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -51,34 +48,9 @@ export default function About() {
     return () => observer.disconnect();
   }, [hasStarted]);
 
-  useEffect(() => {
-    if (!hasStarted) return;
-
-    // Keep animated text outside React reconciliation for browser-translation compatibility.
-    typingIndexRef.current = Math.max(typingIndexRef.current, typedLength);
-    if (typingIndexRef.current >= targetText.length) {
-      setIsTyping(false);
-      return;
-    }
-
-    setIsTyping(true);
-    const interval = window.setInterval(() => {
-      const nextIndex = Math.min(typingIndexRef.current + 1, targetText.length);
-      typingIndexRef.current = nextIndex;
-      if (typedTextRef.current) typedTextRef.current.textContent = targetText.slice(0, nextIndex);
-
-      if (nextIndex >= targetText.length) {
-        window.clearInterval(interval);
-        setTypedLength(nextIndex);
-        setIsTyping(false);
-      }
-    }, 28);
-
-    return () => window.clearInterval(interval);
-  }, [hasStarted, isExpanded, targetText, typedLength]);
-
   const handleReadMore = () => {
     if (!canReadMore) return;
+    setTypingComplete(false);
     setIsExpanded(true);
   };
 
@@ -101,7 +73,7 @@ export default function About() {
                 aria-live="polite"
                 className="inline-block px-5 py-2.5 rounded-md neon-border-red font-hack text-xs uppercase tracking-wider hover:bg-neon-red/10 transition-colors disabled:opacity-80 disabled:cursor-default"
               >
-                {isExpanded ? (typedLength < bioText.length ? "Completing..." : "Biography Complete") : "Read More"}
+                {isExpanded ? (typingComplete ? "Biography Complete" : "Completing...") : "Read More"}
               </button>
             )}
           </div>
@@ -121,15 +93,21 @@ export default function About() {
               <p aria-hidden="true" className="invisible text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
                 {targetText}
               </p>
-              <p className="absolute inset-0 bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words">
-                <span ref={typedTextRef} />
-                {isTyping && (
-                  <span
-                    aria-hidden="true"
-                    className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-cyan shadow-[0_0_8px_#00e5ff] animate-pulse"
-                  />
+              <motion.p
+                key={isExpanded ? "full-biography" : "intro-biography"}
+                initial={{ clipPath: "inset(0 100% 0 0)" }}
+                animate={{ clipPath: hasStarted ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)" }}
+                transition={{ duration: isExpanded ? 4.5 : 2.2, ease: "linear" }}
+                onAnimationComplete={() => {
+                  if (hasStarted) setTypingComplete(true);
+                }}
+                className="absolute inset-0 bg-[linear-gradient(110deg,#00a8ff_0%,#ff1744_50%,#00a8ff_100%)] bg-clip-text text-transparent text-base md:text-lg leading-8 md:leading-9 tracking-wide whitespace-pre-wrap break-words"
+              >
+                {targetText}
+                {!typingComplete && hasStarted && (
+                  <span aria-hidden="true" className="inline-block ml-1 h-4 w-[2px] translate-y-[2px] bg-neon-cyan shadow-[0_0_8px_#00e5ff] animate-pulse" />
                 )}
-              </p>
+              </motion.p>
             </div>
 
             {isExpanded && (
