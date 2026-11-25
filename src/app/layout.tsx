@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/ui/CustomCursor";
 import SiteLoader from "@/components/ui/SiteLoader";
+import GlobalSiteBackground from "@/components/ui/GlobalSiteBackground";
 
 export const metadata: Metadata = {
   title: "Nawaf | Portfolio",
@@ -43,12 +44,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
+      <body className="relative min-h-full flex flex-col bg-[#060607] text-white">
+        <GlobalSiteBackground />
         <SiteLoader />
         <CustomCursor />
         <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <main className="relative z-10 flex-1">{children}</main>
+        <div className="relative z-10"><Footer /></div>
       </body>
     </html>
   );
