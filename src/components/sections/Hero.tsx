@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useInView } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
@@ -12,20 +12,143 @@ function TypedText({ text, className = "", active }: { text: string; className?:
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useInView(ref, { once: true, amount: 0.01 });
   const characters = Array.from(text);
+
   return (
-    <motion.span ref={ref} aria-label={text} className={className} initial="hidden"
+    <motion.span
+      ref={ref}
+      aria-label={text}
+      className={className}
+      initial="hidden"
       animate={active && isInView ? "show" : "hidden"}
-      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055 } } }}>
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055 } } }}
+    >
       {characters.map((character, index) => (
-        <motion.span key={index} aria-hidden="true" className="inline-block"
+        <motion.span
+          key={index}
+          aria-hidden="true"
+          className="inline-block"
           variants={{
             hidden: { opacity: 0, y: 8, filter: "blur(4px)" },
             show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.24, ease: "easeOut" } },
-          }}>
+          }}
+        >
           {character === " " ? "\u00A0" : character}
         </motion.span>
       ))}
     </motion.span>
+  );
+}
+
+function TitleItem({ title, active }: { title: string; active: boolean }) {
+  const ref = useRef<HTMLLIElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.08 });
+
+  return (
+    <motion.li
+      ref={ref}
+      initial={{ opacity: 0, x: -22, filter: "blur(5px)" }}
+      animate={active && isInView ? { opacity: 1, x: 0, filter: "blur(0px)" } : { opacity: 0, x: -22, filter: "blur(5px)" }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      className="flex items-center gap-2 text-white/80"
+    >
+      <span className="text-neon-red">{">"}</span>
+      <TypedText text={title} active={active} />
+    </motion.li>
+  );
+}
+
+function RevealLink({
+  href,
+  className,
+  direction,
+  delay,
+  active,
+  target,
+  rel,
+  children,
+}: {
+  href: string;
+  className: string;
+  direction: number;
+  delay: number;
+  active: boolean;
+  target?: string;
+  rel?: string;
+  children: ReactNode;
+}) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.12 });
+
+  return (
+    <motion.a
+      ref={ref}
+      initial={false}
+      animate={active && isInView
+        ? { opacity: 1, x: 0, filter: "blur(0px)" }
+        : { opacity: 0, x: direction, filter: "blur(7px)" }}
+      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: -4, scale: 1.025 }}
+      whileTap={{ scale: 0.98 }}
+      href={href}
+      target={target}
+      rel={rel}
+      className={className}
+    >
+      {children}
+    </motion.a>
+  );
+}
+
+function SocialLinks({ active }: { active: boolean }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.15 });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="flex items-center gap-3"
+      initial="hidden"
+      animate={active && isInView ? "show" : "hidden"}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.14, delayChildren: 0.08 } } }}
+    >
+      {socials.map((social) => {
+        const Icon = SOCIAL_ICONS[social.icon] ?? SOCIAL_ICONS.Github;
+        const iconVariants = {
+          hidden: { opacity: 0, y: 18, scale: 0.82, filter: "blur(5px)" },
+          show: { opacity: social.url ? 1 : 0.4, y: 0, scale: 1, filter: "blur(0px)", transition: { duration: 0.42, ease: "easeOut" as const } },
+        };
+
+        if (!social.url) {
+          return (
+            <motion.span
+              key={social.name}
+              aria-label={`${social.name} (link coming soon)`}
+              title={`${social.name} — link coming soon`}
+              variants={iconVariants}
+              className="w-11 h-11 flex items-center justify-center rounded-lg glass cursor-not-allowed"
+            >
+              <Icon size={18} />
+            </motion.span>
+          );
+        }
+
+        return (
+          <motion.a
+            key={social.name}
+            variants={iconVariants}
+            whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={social.name}
+            title={social.name}
+            className="w-11 h-11 flex items-center justify-center rounded-lg glass cursor-pointer hover:neon-border-red hover:text-neon-red hover:scale-110 transition-all"
+          >
+            <Icon size={18} />
+          </motion.a>
+        );
+      })}
+    </motion.div>
   );
 }
 
@@ -61,101 +184,48 @@ export default function Hero() {
             <TypedText text="Software Development | AI Projects | Web Applications" active={introComplete} />
           </p>
 
-          {/* Animated typing list */}
-          <motion.ul className="font-hack text-sm md:text-base space-y-2 mb-9">
-            {profile.titles.map((title, i) => (
-              <motion.li
-                key={title}
-                variants={{
-                  hidden: { opacity: 0, x: -22, filter: "blur(5px)" },
-                  show: { opacity: 1, x: 0, filter: "blur(0px)", transition: { duration: 0.55, ease: "easeOut" } },
-                }}
-                initial="hidden"
-                whileInView={introComplete ? "show" : undefined}
-                viewport={{ once: true, amount: 0.01 }}
-                className="flex items-center gap-2 text-white/80"
-              >
-                <span className="text-neon-red">{">"}</span>
-                <TypedText text={title} active={introComplete} />
-              </motion.li>
+          {/* Each title waits for its own viewport entry */}
+          <ul className="font-hack text-sm md:text-base space-y-2 mb-9">
+            {profile.titles.map((title) => (
+              <TitleItem key={title} title={title} active={introComplete} />
             ))}
-          </motion.ul>
+          </ul>
 
-          {/* Buttons */}
+          {/* Each CTA has its own viewport observer */}
           <div className="flex flex-wrap gap-4 mb-9">
-            <motion.a
-              initial={{ opacity: 0, x: 64, filter: "blur(7px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, amount: 0.12 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              whileHover={{ y: -4, scale: 1.025 }}
-              whileTap={{ scale: 0.98 }}
+            <RevealLink
               href="#projects"
               className="glow-btn group flex items-center gap-2 px-6 py-3.5 rounded-lg bg-neon-red/90 text-white font-hack text-sm uppercase tracking-wider shadow-[0_0_24px_rgba(255,0,60,0.45)] hover:shadow-[0_0_36px_rgba(255,0,60,0.75)] transition-all"
+              direction={64}
+              delay={0}
+              active={introComplete}
             >
               <Eye size={17} /> View Portfolio
-            </motion.a>
-            <motion.a
-              initial={{ opacity: 0, x: -64, filter: "blur(7px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, amount: 0.12 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
-              whileHover={{ y: -4, scale: 1.025 }}
-              whileTap={{ scale: 0.98 }}
+            </RevealLink>
+            <RevealLink
               href={socials.find((s) => s.name === "YouTube")?.url ?? "#videos"}
               target="_blank"
               rel="noopener noreferrer"
               className="glow-btn flex items-center gap-2 px-6 py-3.5 rounded-lg neon-border-cyan text-neon-cyan font-hack text-sm uppercase tracking-wider hover:bg-neon-cyan/10 transition-colors"
+              direction={-64}
+              delay={0}
+              active={introComplete}
             >
               <PlayCircle size={17} /> Watch YouTube
-            </motion.a>
-            <motion.a
-              initial={{ opacity: 0, x: 64, filter: "blur(7px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-              viewport={{ once: true, amount: 0.12 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
-              whileHover={{ y: -4, scale: 1.025 }}
-              whileTap={{ scale: 0.98 }}
-              href={`mailto:${profile.email}`
+            </RevealLink>
+            <RevealLink
+              href={`mailto:${profile.email}`}
               className="glow-btn flex items-center gap-2 px-6 py-3.5 rounded-lg border border-white/20 text-white/90 font-hack text-sm uppercase tracking-wider hover:border-neon-red hover:text-neon-red transition-colors"
+              direction={64}
+              delay={0}
+              active={introComplete}
             >
               <Mail size={17} /> Contact Me
-            </motion.a>
-          </motion.div>
+            </RevealLink>
+          </div>
 
-          {/* Socials */}
-          <motion.div className="flex items-center gap-3" initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.14, delayChildren: 0.08 } } }}>
-            {socials.map((s) => {
-              const Icon = SOCIAL_ICONS[s.icon] ?? SOCIAL_ICONS.Github;
-              if (!s.url) {
-                return (
-                  <span
-                    key={s.name}
-                    aria-label={`${s.name} (link coming soon)`}
-                    title={`${s.name} — link coming soon`}
-                    className="w-11 h-11 flex items-center justify-center rounded-lg glass opacity-40 cursor-not-allowed"
-                  >
-                    <Icon size={18} />
-                  </span>
-                );
-              }
-              return (
-                <motion.a
-                  key={s.name}
-                  variants={{ hidden: { opacity: 0, y: 18, scale: 0.82 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.42 } } }}
-                  whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.name}
-                  title={s.name}
-                  className="w-11 h-11 flex items-center justify-center rounded-lg glass cursor-pointer hover:neon-border-red hover:text-neon-red hover:scale-110 transition-all"
-                >
-                  <Icon size={18} />
-                </motion.a>
-              );
-            })}
-          </motion.div>
+          {/* Social row waits for its own viewport entry, then reveals icons in sequence */}
+          <SocialLinks active={introComplete} />
         </div>
 
         {/* Right column — cinematic hacker artwork */}
