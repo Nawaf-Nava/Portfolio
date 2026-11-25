@@ -50,30 +50,18 @@ function useReveal(ref: { current: HTMLElement | null }, active: boolean) {
 function TypedText({ text, className = "", active }: { text: string; className?: string; active: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   const isInView = useReveal(ref, active);
-  const characters = Array.from(text);
 
   return (
     <motion.span
       ref={ref}
-      aria-label={text}
       className={className}
-      initial="hidden"
-      animate={active && isInView ? "show" : "hidden"}
-      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055 } } }}
+      initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+      animate={active && isInView
+        ? { opacity: 1, y: 0, filter: "blur(0px)" }
+        : { opacity: 0, y: 8, filter: "blur(4px)" }}
+      transition={{ duration: 0.42, ease: "easeOut" }}
     >
-      {characters.map((character, index) => (
-        <motion.span
-          key={index}
-          aria-hidden="true"
-          className="inline-block"
-          variants={{
-            hidden: { opacity: 0, y: 8, filter: "blur(4px)" },
-            show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.24, ease: "easeOut" } },
-          }}
-        >
-          {character === " " ? "\u00A0" : character}
-        </motion.span>
-      ))}
+      {text}
     </motion.span>
   );
 }
@@ -216,7 +204,7 @@ export default function Hero() {
 
           <h1 className="font-display font-black leading-[0.95] mb-5">
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
-              <TypedText text="NAWAF" active={introComplete} />
+              <TypedText text="NAWAF" active={introComplete} className="notranslate" />
             </span>
             <span className="block neon-text-red text-[2rem] md:text-5xl xl:text-6xl mt-2 tracking-wide">
               <TypedText text="AI & SOFTWARE PROJECTS" active={introComplete} />
