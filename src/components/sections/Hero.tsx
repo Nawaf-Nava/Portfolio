@@ -8,9 +8,11 @@ import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
 
+const CENTER_TRIGGER_MARGIN = "-45% 0px -45% 0px";
+
 function TypedText({ text, className = "", active }: { text: string; className?: string; active: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.01 });
+  const isInView = useInView(ref, { once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN });
   const characters = Array.from(text);
 
   return (
@@ -41,7 +43,7 @@ function TypedText({ text, className = "", active }: { text: string; className?:
 
 function TitleItem({ title, active }: { title: string; active: boolean }) {
   const ref = useRef<HTMLLIElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.08 });
+  const isInView = useInView(ref, { once: true, amount: 0.08, margin: CENTER_TRIGGER_MARGIN });
 
   return (
     <motion.li
@@ -77,7 +79,7 @@ function RevealLink({
   children: ReactNode;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.12 });
+  const isInView = useInView(ref, { once: true, amount: 0.12, margin: CENTER_TRIGGER_MARGIN });
 
   return (
     <motion.a
@@ -101,7 +103,7 @@ function RevealLink({
 
 function SocialLinks({ active }: { active: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.15 });
+  const isInView = useInView(ref, { once: true, amount: 0.15, margin: CENTER_TRIGGER_MARGIN });
 
   return (
     <motion.div
@@ -232,7 +234,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, x: 42, scale: 0.94, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.01 }}
+          viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
           transition={{ duration: 1.05, ease: "easeOut" }}
           className="order-1 lg:order-2 relative"
         >
@@ -251,7 +253,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.01 }}
+            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
             transition={{ duration: 0.8 }}
             className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red rounded-full"
           />
@@ -259,7 +261,7 @@ export default function Hero() {
 
           <motion.div
             whileInView={{ y: [0, -8, 0] }}
-            viewport={{ once: true, amount: 0.01 }}
+            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="relative left-1/2 z-10 w-screen max-w-none -translate-x-1/2 lg:left-auto lg:mx-auto lg:w-full lg:max-w-[590px] lg:translate-x-0"
           >
@@ -279,7 +281,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.01 }}
+            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
             transition={{ delay: 0.45, duration: 0.8 }}
             className="pointer-events-none absolute inset-0 z-20 hidden sm:block font-hack select-none"
           >
@@ -310,7 +312,7 @@ export default function Hero() {
         href="#about"
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, margin: CENTER_TRIGGER_MARGIN }}
         transition={{ delay: 0.8, duration: 0.7 }}
         className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-white/40 hover:text-neon-cyan transition-colors"
       >
@@ -320,7 +322,7 @@ export default function Hero() {
             className="w-1 h-1.5 rounded-full bg-neon-cyan"
             initial={{ y: 0, opacity: 1 }}
             whileInView={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
-            viewport={{ once: true, amount: 0.01 }}
+            viewport={{ once: true, amount: 0.01, margin: CENTER_TRIGGER_MARGIN }}
             transition={{ duration: 1.6, repeat: Infinity }}
           />
         </span>
