@@ -9,7 +9,7 @@ export default async function Videos() {
   const channel = socials.find((s) => s.name === "YouTube")?.url ?? "#";
 
   return (
-    <section id="videos" className="relative py-24 px-5 md:px-8 bg-[#0a0d10]">
+    <section id="videos" className="relative py-24 px-5 md:px-8 bg-transparent">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
           <SectionHeading eyebrow="From The Channel" title="YouTube Videos" accent="red" />
