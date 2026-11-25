@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CustomCursor from "@/components/ui/CustomCursor";
+import SiteLoader from "@/components/ui/SiteLoader";
 
 export const metadata: Metadata = {
   title: "Nawaf | Portfolio",
@@ -43,6 +44,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-[#0a0a0a] text-white">
+        <SiteLoader />
         <CustomCursor />
         <Navbar />
         <main className="flex-1">{children}</main>
