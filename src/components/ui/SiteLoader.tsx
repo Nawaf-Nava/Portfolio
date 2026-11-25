@@ -49,7 +49,11 @@ export default function SiteLoader() {
       if (cancelled) return;
       setLeaving(true);
       exitTimer = setTimeout(() => {
-        if (!cancelled) setVisible(false);
+        if (!cancelled) {
+          document.documentElement.dataset.navaReady = "true";
+          window.dispatchEvent(new Event("nava:loader-complete"));
+          setVisible(false);
+        }
       }, 1050);
     };
 
