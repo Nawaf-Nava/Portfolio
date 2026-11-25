@@ -12,47 +12,67 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
 };
 
+
+function TypedText({ text, className = "" }: { text: string; className?: string }) {
+  const characters = Array.from(text);
+
+  return (
+    <motion.span
+      aria-label={text}
+      className={className}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.01 }}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: 0.035 } },
+      }}
+    >
+      <span aria-hidden="true" className="inline">
+        {characters.map((character, index) => (
+          <motion.span
+            key={index}
+            className="inline-block"
+            variants={{
+              hidden: { opacity: 0, y: 7, filter: "blur(3px)" },
+              show: {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                transition: { duration: 0.18, ease: "easeOut" },
+              },
+            }}
+          >
+            {character === " " ? "\u00A0" : character}
+          </motion.span>
+        ))}
+      </span>
+    </motion.span>
+  );
+}
+
 export default function Hero() {
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       <div className="mx-auto max-w-7xl w-full px-5 md:px-8 pt-28 pb-16 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
         {/* Left column */}
         <div className="order-2 lg:order-1">
-          <motion.p
-            variants={item}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.01 }}
-            className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide"
-          >
-            {"< "}Student Developer{" />"}
-          </motion.p>
+          <p className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide">
+            <TypedText text="< Student Developer />" />
+          </p>
 
-          <motion.h1
-            variants={item}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.01 }}
-            className="font-display font-black leading-[0.95] mb-5"
-          >
+          <h1 className="font-display font-black leading-[0.95] mb-5">
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
-              NAWAF
+              <TypedText text="NAWAF" />
             </span>
             <span className="block neon-text-red text-[2rem] md:text-5xl xl:text-6xl mt-2 tracking-wide">
-              AI & SOFTWARE PROJECTS
+              <TypedText text="AI & SOFTWARE PROJECTS" />
             </span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            variants={item}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.01 }}
-            className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl"
-          >
-            Software Development <span className="text-neon-red">|</span> AI Projects{" "}
-            <span className="text-neon-red">|</span> Web Applications
-          </motion.p>
+          <p className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl">
+            <TypedText text="Software Development | AI Projects | Web Applications" />
+          </p>
 
           {/* Animated typing list */}
           <motion.ul className="font-hack text-sm md:text-base space-y-2 mb-9">
@@ -69,7 +89,7 @@ export default function Hero() {
                 className="flex items-center gap-2 text-white/80"
               >
                 <span className="text-neon-red">{">"}</span>
-                <span>{title}</span>
+                <TypedText text={title} />
               </motion.li>
             ))}
           </motion.ul>
@@ -174,11 +194,13 @@ export default function Hero() {
           </div>
 
           {/* Volumetric red glow behind the figure */}
-          <div initial={{ opacity: 0 }}
+          <motion.div
+            initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, amount: 0.01 }}
             transition={{ duration: 0.8 }}
-            className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red rounded-full" />
+            className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red rounded-full"
+          />
 
 
           <motion.div
