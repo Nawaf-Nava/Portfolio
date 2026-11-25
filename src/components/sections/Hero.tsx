@@ -1,53 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { motion, type Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useInView } from "framer-motion";
 import { Eye, PlayCircle, Mail } from "lucide-react";
 import { SOCIAL_ICONS } from "@/components/ui/SocialIcon";
 import profile from "@/data/profile.json";
 import socials from "@/data/socials.json";
 
-const item: Variants = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
-};
-
-
 function TypedText({ text, className = "", active }: { text: string; className?: string; active: boolean }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, amount: 0.01 });
   const characters = Array.from(text);
-
   return (
-    <motion.span
-      aria-label={text}
-      className={className}
-      initial="hidden"
-      whileInView={active ? "show" : undefined}
-      viewport={{ once: true, amount: 0.01 }}
-      variants={{
-        hidden: {},
-        show: { transition: { staggerChildren: 0.035 } },
-      }}
-    >
-      <span aria-hidden="true" className="inline">
-        {characters.map((character, index) => (
-          <motion.span
-            key={index}
-            className="inline-block"
-            variants={{
-              hidden: { opacity: 0, y: 7, filter: "blur(3px)" },
-              show: {
-                opacity: 1,
-                y: 0,
-                filter: "blur(0px)",
-                transition: { duration: 0.18, ease: "easeOut" },
-              },
-            }}
-          >
-            {character === " " ? "\u00A0" : character}
-          </motion.span>
-        ))}
-      </span>
+    <motion.span ref={ref} aria-label={text} className={className} initial="hidden"
+      animate={active && isInView ? "show" : "hidden"}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.055 } } }}>
+      {characters.map((character, index) => (
+        <motion.span key={index} aria-hidden="true" className="inline-block"
+          variants={{
+            hidden: { opacity: 0, y: 8, filter: "blur(4px)" },
+            show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.24, ease: "easeOut" } },
+          }}>
+          {character === " " ? "\u00A0" : character}
+        </motion.span>
+      ))}
     </motion.span>
   );
 }
@@ -107,10 +84,10 @@ export default function Hero() {
           {/* Buttons */}
           <div className="flex flex-wrap gap-4 mb-9">
             <motion.a
-              variants={item}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.01 }}
+              initial={{ opacity: 0, x: 64, filter: "blur(7px)" }}
+              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href="#projects"
@@ -119,10 +96,10 @@ export default function Hero() {
               <Eye size={17} /> View Portfolio
             </motion.a>
             <motion.a
-              variants={item}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.01 }}
+              initial={{ opacity: 0, x: -64, filter: "blur(7px)" }}
+              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.06 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href={socials.find((s) => s.name === "YouTube")?.url ?? "#videos"}
@@ -133,13 +110,13 @@ export default function Hero() {
               <PlayCircle size={17} /> Watch YouTube
             </motion.a>
             <motion.a
-              variants={item}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, amount: 0.01 }}
+              initial={{ opacity: 0, x: 64, filter: "blur(7px)" }}
+              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, amount: 0.12 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
-              href={`mailto:${profile.email}`}
+              href={`mailto:${profile.email}`
               className="glow-btn flex items-center gap-2 px-6 py-3.5 rounded-lg border border-white/20 text-white/90 font-hack text-sm uppercase tracking-wider hover:border-neon-red hover:text-neon-red transition-colors"
             >
               <Mail size={17} /> Contact Me
@@ -147,7 +124,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Socials */}
-          <div className="flex items-center gap-3">
+          <motion.div className="flex items-center gap-3" initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.14, delayChildren: 0.08 } } }}>
             {socials.map((s) => {
               const Icon = SOCIAL_ICONS[s.icon] ?? SOCIAL_ICONS.Github;
               if (!s.url) {
@@ -165,11 +142,8 @@ export default function Hero() {
               return (
                 <motion.a
                   key={s.name}
-                  initial={{ opacity: 0, y: 12, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, amount: 0.01 }}
+                  variants={{ hidden: { opacity: 0, y: 18, scale: 0.82 }, show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.42 } } }}
                   whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
-                  transition={{ duration: 0.35 }}
                   href={s.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -181,7 +155,7 @@ export default function Hero() {
                 </motion.a>
               );
             })}
-          </div>
+          </motion.div>
         </div>
 
         {/* Right column — cinematic hacker artwork */}
