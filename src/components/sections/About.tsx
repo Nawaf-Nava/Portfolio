@@ -23,7 +23,7 @@ export default function About() {
   const introText = bioText.slice(0, introEnd);
   const targetText = isExpanded ? bioText : introText;
   const canReadMore = hasStarted && !isExpanded && typingComplete;
-  const showReadMore = hasStarted && (!isExpanded || typingComplete);
+  const showReadMore = hasStarted && (typingComplete || isExpanded);
 
   useEffect(() => {
     const section = sectionRef.current;
