@@ -22,7 +22,7 @@ export default function Hero() {
             variants={item}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.35 }}
+            viewport={{ once: true, amount: 0.01 }}
             className="font-hack text-neon-cyan text-sm md:text-base mb-5 tracking-wide"
           >
             {"< "}Student Developer{" />"}
@@ -32,7 +32,7 @@ export default function Hero() {
             variants={item}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.01 }}
             className="font-display font-black leading-[0.95] mb-5"
           >
             <span className="block text-white text-6xl md:text-7xl xl:text-8xl drop-shadow-[0_0_18px_rgba(255,255,255,0.15)]">
@@ -47,7 +47,7 @@ export default function Hero() {
             variants={item}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.35 }}
+            viewport={{ once: true, amount: 0.01 }}
             className="text-white/70 text-sm md:text-base tracking-wide mb-7 max-w-xl"
           >
             Software Development <span className="text-neon-red">|</span> AI Projects{" "}
@@ -65,7 +65,7 @@ export default function Hero() {
                 }}
                 initial="hidden"
                 whileInView="show"
-                viewport={{ once: true, amount: 0.45 }}
+                viewport={{ once: true, amount: 0.01 }}
                 className="flex items-center gap-2 text-white/80"
               >
                 <span className="text-neon-red">{">"}</span>
@@ -80,7 +80,7 @@ export default function Hero() {
               variants={item}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true, amount: 0.4 }}
+              viewport={{ once: true, amount: 0.01 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href="#projects"
@@ -92,7 +92,7 @@ export default function Hero() {
               variants={item}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true, amount: 0.4 }}
+              viewport={{ once: true, amount: 0.01 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href={socials.find((s) => s.name === "YouTube")?.url ?? "#videos"}
@@ -106,7 +106,7 @@ export default function Hero() {
               variants={item}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true, amount: 0.4 }}
+              viewport={{ once: true, amount: 0.01 }}
               whileHover={{ y: -4, scale: 1.025 }}
               whileTap={{ scale: 0.98 }}
               href={`mailto:${profile.email}`}
@@ -137,7 +137,7 @@ export default function Hero() {
                   key={s.name}
                   initial={{ opacity: 0, y: 12, scale: 0.9 }}
                   whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
+                  viewport={{ once: true, amount: 0.01 }}
                   whileHover={{ y: -5, rotate: -4, scale: 1.1 }}
                   transition={{ duration: 0.35 }}
                   href={s.url}
@@ -158,7 +158,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, x: 42, scale: 0.94, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, x: 0, scale: 1, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.2 }}
+          viewport={{ once: true, amount: 0.01 }}
           transition={{ duration: 1.05, ease: "easeOut" }}
           className="order-1 lg:order-2 relative"
         >
@@ -174,12 +174,16 @@ export default function Hero() {
           </div>
 
           {/* Volumetric red glow behind the figure */}
-          <div className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red animate-glow-pulse rounded-full" />
+          <div initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.01 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-x-0 top-[8%] bottom-[12%] -z-10 hero-glow-red rounded-full" />
 
 
           <motion.div
             whileInView={{ y: [0, -8, 0] }}
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.01 }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             className="relative left-1/2 z-10 w-screen max-w-none -translate-x-1/2 lg:left-auto lg:mx-auto lg:w-full lg:max-w-[590px] lg:translate-x-0"
           >
@@ -199,7 +203,7 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, scale: 0.96 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={{ once: true, amount: 0.01 }}
             transition={{ delay: 0.45, duration: 0.8 }}
             className="pointer-events-none absolute inset-0 z-20 hidden sm:block font-hack select-none"
           >
@@ -238,7 +242,9 @@ export default function Hero() {
         <span className="w-5 h-8 rounded-full border border-white/25 flex justify-center pt-1.5">
           <motion.span
             className="w-1 h-1.5 rounded-full bg-neon-cyan"
-            animate={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
+            initial={{ y: 0, opacity: 1 }}
+            whileInView={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
+            viewport={{ once: true, amount: 0.01 }}
             transition={{ duration: 1.6, repeat: Infinity }}
           />
         </span>
