@@ -73,7 +73,6 @@ function TypedText({ text, className = "", active }: { text: string; className?:
         ? { opacity: 1, y: 0, filter: "blur(0px)" }
         : { opacity: 0, y: 8, filter: "blur(4px)" }}
       transition={{ duration: 0.42, ease: "easeOut" }}
-    >
       dangerouslySetInnerHTML={{ __html: escapeHtml(text) }}
     />
   );
